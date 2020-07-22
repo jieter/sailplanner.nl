@@ -5,7 +5,7 @@
     import marked from 'marked';
     import { transformFromLegacy } from './legacy.js';
     import { onMount } from 'svelte';
-    import { setState, subscribe } from './store.js';
+    import { setState, subscribe, update } from './store.js';
 
     import './planner.css';
 
@@ -27,11 +27,24 @@
             setState(newState);
         });
     });
+
+    function updateSettings() {
+        update(state => {
+            state.settings = settings;
+            return state;
+        });
+    }
 </script>
 <div id="sidebar">
     <h1 id="header">Sailplanner</h1>
     <div id="comment">{@html marked(comment)}</div>
     <LegsTable />
+
+    <fieldset class="settings">
+        <legend>Settings</legend>
+        <label for="meansog">Average <abbr title="Speed Over Ground">SOG</abbr>:</label>
+        <input type="number" bind:value="{settings.average}" on:change="{updateSettings}" min="0" max="40" />&nbsp;kts<br />
+    </fieldset>
 
     <div id="other">
         <a id="page-about">About (NL)</a> |
