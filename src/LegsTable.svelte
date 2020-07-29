@@ -31,7 +31,7 @@
 	};
 </script>
 
-<table id="legs" class="zebra">
+<table class="legs-table zebra">
     <tr>
         <th class="start" title="Time of departure">Start</th>
         <th class="comment">Comment</th>
@@ -60,3 +60,42 @@
     </tr>
     {/if}
 </table>
+
+<style>
+    .legs-table {
+        border-collapse: collapse;
+        font-size: 10px;
+        width: 300px;
+        border-top: 1px solid #ccc;
+        border-bottom: 1px solid #ccc;
+        margin-bottom: 10px;
+    }
+
+    .legs-table th {
+        border-bottom: 1px solid #ccc;
+        padding: 5px 2px 2px 2px;
+        background-color: #eee;
+        border-right: 1px solid #ddd;
+    }
+
+    .legs-table tr td,
+    .legs-table tfoot tr td {
+        padding-left: 2px;
+        padding-right: 2px;
+        text-align: right;
+        border-right: 1px solid #ddd;
+        border-bottom: 1px solid #ddd;
+        vertical-align: top;
+    }
+
+    .legs-table th.comment,
+    .legs-table td.comment {
+        text-align: left;
+        width: 140px;
+    }
+
+    .legs-table th:last-child,
+    .legs-table td:last-child {
+        border-right: 0px;
+    }
+</style>

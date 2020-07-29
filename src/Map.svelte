@@ -42,7 +42,7 @@
                 weight: leg.width
             }).addTo(map);
 
-            legs[i].dog = layer.getDistance();
+            legs[i].dog = Math.round(layer.getDistance() * 10) / 10;
         });
         update(state => {
             state.legs = legs;

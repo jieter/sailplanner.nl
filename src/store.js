@@ -15,6 +15,19 @@ const addLeg = leg => update(state => {
     state.legs = [...state.legs, leg];
     return state;
 });
+
+export const updateLeg = (leg, i) => update(state => {
+    state.legs[i] = leg;
+    return state;
+});
 const reset = () => { set(EMPTY); };
 
-export const setState = set;
+
+export default {
+    subscribe,
+    set,
+    update,
+    reset,
+    addLeg,
+    updateLeg
+}

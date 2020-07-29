@@ -3,92 +3,30 @@ body {
     font-size: 13px;
 }
 
-h1 {
-    font-size: 1.1em;
+h1,
+h2 {
     margin-top: 0px;
     margin-bottom: 5px;
+}
+
+h1 {
+    font-size: 1.1em;
 }
 
 h2 {
     font-size: 1.05em;
-    margin-top: 0px;
-    margin-bottom: 5px;
-}
-
-a img {
-    border: 0px;
-}
-
-input {
-    border: 1px solid #ccc;
-}
-
-input.check {
-    width: 15px !important;
 }
 
 .hidden {
     display: none;
 }
 
-#comment {
-    padding-left: 2px;
-    margin-bottom: 10px;
-    font-size: 0.9em;
+.pull-right {
+    float: right;
 }
 
-#comment textarea {
-    width: 300px;
-    height: 50px;
-}
-
-table.zebra tr.even td {
-    background-color: #efefef;
-}
-
-table#legs {
-    border-collapse: collapse;
-    font-size: 10px;
-    width: 300px;
-    border-top: 1px solid #ccc;
-    border-bottom: 1px solid #ccc;
-    margin-bottom: 10px;
-}
-
-table#legs th {
-    border-bottom: 1px solid #ccc;
-    padding: 5px 2px 2px 2px;
-    background-color: #eee;
-    border-right: 1px solid #ddd;
-}
-
-table#legs tr.leg {
-    cursor: pointer;
-}
-
-table#legs tr td,
-table#legs tfoot tr td {
-    padding-left: 2px;
-    padding-right: 2px;
-    text-align: right;
-    border-right: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
-    vertical-align: top;
-}
-
-table#legs th.comment,
-table#legs td.comment {
-    text-align: left;
-    width: 140px;
-}
-
-table#legs th:last-child,
-table#legs td:last-child {
-    border-right: 0px;
-}
-
-table#legs tr#edit td {
-    text-align: left;
+a img {
+    border: 0px;
 }
 
 #sidebar {
@@ -105,7 +43,30 @@ table#legs tr#edit td {
     border: 1px solid black;
 }
 
-.knop {
+input {
+    border: 1px solid #ccc;
+}
+
+input.check {
+    width: 15px !important;
+}
+
+#comment {
+    padding-left: 2px;
+    margin-bottom: 10px;
+    font-size: 0.9em;
+}
+
+#comment textarea {
+    width: 300px;
+    height: 50px;
+}
+
+.zebra tr:nth-child(odd) td {
+    background-color: #f6f6f6;
+}
+
+.button {
     background-color: #eee;
     border: 1px solid #aaa;
     margin: 1px;
@@ -157,19 +118,6 @@ fieldset.settings select#overlay {
     border: 1px solid #bbb;
     text-align: left;
     margin-bottom: 4px;
-}
-
-#io .knop {
-    float: right;
-    margin-top: 4px;
-    margin-right: 0px;
-    margin-left: 4px;
-}
-
-#io #new,
-#io #copy,
-#io #static {
-    float: left;
 }
 
 #disclaimer {
