@@ -1,16 +1,24 @@
 <script>
-    import { beforeUpdate } from 'svelte';
+    import { beforeUpdate} from 'svelte';
     import { formatDuration, smartRound } from './formatting.js';
-    import { subscribe } from './store.js';
+    import { subscribe, update } from './store.js';
 
     let settings;
     let legs;
+    let totals;
 
     subscribe(state => {
         settings = state.settings;
         legs = state.legs;
     });
-    let totals = 0;
+
+    let highlight = (i, highlighted) => event => {
+        update(state => {
+            legs[i].highlighted = highlighted;
+            state.legs = legs;
+            return state;
+        });
+    };
 
     beforeUpdate(() => {
         let dog = legs.map(leg => leg.dog).reduce((a, b) => a + b, 0);
@@ -23,7 +31,8 @@
             }
         }
     });
-    function departure(time) {
+
+    let departure = time => {
         let hours, minutes;
         [hours, minutes] = time.split(':');
 
@@ -40,8 +49,8 @@
         <th class="eta" title="Estimated time of arrival">ETA</th>
         <th class="color"></th>
     </tr>
-    {#each legs as leg}
-        <tr>
+    {#each legs as leg, i}
+        <tr on:mouseenter={highlight(i, true)} on:mouseleave={highlight(i, false)}>
             <td class="start">{leg.departure}</td>
             <td class="comment">{leg.comment}</td>
             <td class="dog">{smartRound(leg.dog)}</td>
@@ -51,13 +60,13 @@
         </tr>
     {/each}
     {#if legs.length > 0}
-    <tr>
-        <td colspan="2"><strong>Total:</strong></td>
-        <td>{totals.dog}</td>
-        <td>{totals.ttg}</td>
-        <td></td>
-        <td></td>
-    </tr>
+        <tr>
+            <td colspan="2"><strong>Total:</strong></td>
+            <td>{totals.dog}</td>
+            <td>{totals.ttg}</td>
+            <td></td>
+            <td></td>
+        </tr>
     {/if}
 </table>
 

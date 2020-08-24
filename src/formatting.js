@@ -1,4 +1,7 @@
 export function formatDuration(seconds) {
+    if (isNaN(seconds)) {
+        return '';
+    }
     let minutes = Math.round(seconds * 60);
     let hours = Math.floor(minutes / 60);
     minutes = minutes % 60;
@@ -14,20 +17,23 @@ export function formatDuration(seconds) {
     }
 }
 
-export function roundn(float, n) {
+export function roundn(value, n) {
     if (n === undefined) {
-        return Math.round(float);
+        return Math.round(value);
     }
     n = Math.pow(10, n);
-    return Math.round(float * n) / n;
+    return Math.round(value * n) / n;
 }
 
-export function smartRound(float) {
-    if (float > 100) {
-        return Math.round(float);
-    } else if (float > 10) {
-        return roundn(float, 1);
+export function smartRound(value) {
+    if (isNaN(value)) {
+        return '';
+    }
+    if (value > 100) {
+        return Math.round(value);
+    } else if (value > 10) {
+        return roundn(value, 1);
     } else {
-        return roundn(float, 2);
+        return roundn(value, 2);
     }
 }

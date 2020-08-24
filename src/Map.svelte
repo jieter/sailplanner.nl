@@ -4,8 +4,9 @@
     import "polyline-encoded";
     import "./geoUtil.js";
 
-    import { onMount, beforeUpdate } from 'svelte';
-    import { update, subscribe } from './store.js';
+    import { beforeUpdate, onMount } from 'svelte';
+    import { subscribe, update } from './store.js';
+    import { roundn } from './formatting.js';
 
     let settings;
     let legs;
@@ -35,14 +36,21 @@
         resize();
     });
 
+    // Keep map layers created in this array.
+    let layers = [];
     $: {
         legs.forEach(function (leg, i) {
-            let layer = L.Polyline.fromEncoded(leg.path, {
+            let layer;
+            if (!map.hasLayer(layers[i])) {
+                layers[i] = L.Polyline.fromEncoded(leg.path).addTo(map);
+            }
+            layer = layers[i];
+            layer.setStyle({
                 color: leg.color,
-                weight: leg.width
-            }).addTo(map);
+                weight: leg.highlighted ? (leg.width * 2) : leg.width
+            });
 
-            legs[i].dog = Math.round(layer.getDistance() * 10) / 10;
+            legs[i].dog = roundn(layer.getDistance(), 2);
         });
         update(state => {
             state.legs = legs;
