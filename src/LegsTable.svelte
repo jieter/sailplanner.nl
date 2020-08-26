@@ -1,7 +1,10 @@
 <script>
-    import { beforeUpdate} from 'svelte';
+    import { beforeUpdate, createEventDispatcher } from 'svelte';
     import { formatDuration, smartRound } from './formatting.js';
     import { subscribe, update } from './store.js';
+    import LegEditor from './LegEditor.svelte';
+
+    const dispatch = createEventDispatcher();
 
     let settings;
     let legs;
@@ -11,14 +14,6 @@
         settings = state.settings;
         legs = state.legs;
     });
-
-    let highlight = (i, highlighted) => event => {
-        update(state => {
-            legs[i].highlighted = highlighted;
-            state.legs = legs;
-            return state;
-        });
-    };
 
     beforeUpdate(() => {
         let dog = legs.map(leg => leg.dog).reduce((a, b) => a + b, 0);
@@ -32,15 +27,15 @@
         }
     });
 
-    let departure = time => {
+    function departure(time) {
         let hours, minutes;
         [hours, minutes] = time.split(':');
 
 		return +hours + (+minutes / 60, 1);
-	};
+    };
 </script>
 
-<table class="legs-table zebra">
+<table class="legs-table">
     <tr>
         <th class="start" title="Time of departure">Start</th>
         <th class="comment">Comment</th>
@@ -50,7 +45,10 @@
         <th class="color"></th>
     </tr>
     {#each legs as leg, i}
-        <tr on:mouseenter={highlight(i, true)} on:mouseleave={highlight(i, false)}>
+        <tr on:mouseenter={e => dispatch('highlight', {leg: i, value: true})}
+            on:mouseleave={e => dispatch('highlight', {leg: i, value: false})}
+            on:click={e => dispatch('edit', {leg: i, value: leg.edit === 'edit' ? 'save' : 'edit'})}
+        >
             <td class="start">{leg.departure}</td>
             <td class="comment">{leg.comment}</td>
             <td class="dog">{smartRound(leg.dog)}</td>
@@ -58,6 +56,11 @@
             <td class="eta">{formatDuration((leg.dog / settings.average) + departure(leg.departure))}</td>
             <td class="color" style="background-color: {leg.color};">&nbsp;</td>
         </tr>
+        {#if leg.edit === 'edit'}
+            <td colspan="5">
+                <LegEditor {leg} on:save={e => dispatch('edit', {leg: i, value: 'save'})} />
+            </td>
+        {/if}
     {/each}
     {#if legs.length > 0}
         <tr>
@@ -66,6 +69,12 @@
             <td>{totals.ttg}</td>
             <td></td>
             <td></td>
+        </tr>
+    {:else}
+        <tr>
+            <td colspan="5" class="empty">
+                <button class="button" on:click={e => dispatch('new')}>Create leg</button>
+            </td>
         </tr>
     {/if}
 </table>
@@ -106,5 +115,9 @@
     .legs-table th:last-child,
     .legs-table td:last-child {
         border-right: 0px;
+    }
+    .legs-table .empty {
+        text-align: center;
+        padding: 10px 10px;
     }
 </style>

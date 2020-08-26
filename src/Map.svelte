@@ -1,8 +1,9 @@
 <script>
-    import L from 'leaflet';
+    import * as L from 'leaflet';
+    import 'leaflet-editable';
     import 'leaflet/dist/leaflet.css';
-    import "polyline-encoded";
-    import "./geoUtil.js";
+    import 'polyline-encoded';
+    import './geoUtil.js';
 
     import { beforeUpdate, onMount } from 'svelte';
     import { subscribe, update } from './store.js';
@@ -24,7 +25,8 @@
             svgSprite: false,
             zoomControl: false,
 			center: settings.map.center,
-			zoom: settings.map.zoom
+            zoom: settings.map.zoom,
+            editable: true
         });
         L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
             maxZoom: 19,
@@ -39,16 +41,33 @@
     // Keep map layers created in this array.
     let layers = [];
     $: {
+        if (legs.length == 0) {
+            layers.forEach(function (layer) {
+                layer.removeFrom(map);
+            });
+        }
         legs.forEach(function (leg, i) {
-            let layer;
             if (!map.hasLayer(layers[i])) {
-                layers[i] = L.Polyline.fromEncoded(leg.path).addTo(map);
+                if (leg.path) {
+                    layers[i] = L.Polyline.fromEncoded(leg.path)
+                } else if (leg.edit == 'edit') {
+                    layers[i] = map.editTools.startPolyline();
+                }
             }
-            layer = layers[i];
+            let layer = layers[i];
+            layer.addTo(map);
             layer.setStyle({
                 color: leg.color,
-                weight: leg.highlighted ? (leg.width * 2) : leg.width
+                weight: leg.highlight ? (leg.width * 2) : leg.width
             });
+
+            if (leg.edit === 'edit') {
+                layer.enableEdit(map);
+            } else if (leg.edit === 'save') {
+                legs[i].path = layer.encodePath();
+                delete legs[i].edit;
+                layer.disableEdit();
+            }
 
             legs[i].dog = roundn(layer.getDistance(), 2);
         });

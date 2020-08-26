@@ -20,6 +20,7 @@ export const updateLeg = (leg, i) => update(state => {
     state.legs[i] = leg;
     return state;
 });
+
 const reset = () => { set(EMPTY); };
 
 

@@ -19,9 +19,10 @@ export function formatDuration(seconds) {
 
 export function roundn(value, n) {
     if (n === undefined) {
-        return Math.round(value);
+        n = 1
+    } else {
+        n = Math.pow(10, n);
     }
-    n = Math.pow(10, n);
     return Math.round(value * n) / n;
 }
 
@@ -29,11 +30,9 @@ export function smartRound(value) {
     if (isNaN(value)) {
         return '';
     }
-    if (value > 100) {
-        return Math.round(value);
-    } else if (value > 10) {
-        return roundn(value, 1);
-    } else {
-        return roundn(value, 2);
-    }
+    return roundn(value,
+        value > 100 ? 0 :
+        value > 10 ? 1 :
+        2
+    );
 }

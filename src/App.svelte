@@ -48,11 +48,34 @@
         tag.click();
     }
 
+    function setAction(event) {
+        console.log(event.type, event.detail);
+        store.update(state => {
+            legs[event.detail.leg][event.type] = event.detail.value;
+            state.legs = legs;
+            return state;
+        });
+    }
+
+    function createNewLeg() {
+        store.update(state => {
+            legs.push({
+                comment: '',
+                departure: '10:00',
+                edit: 'edit'
+            })
+            state.legs = legs;
+            return state;
+        })
+    }
+
 </script>
 <div id="sidebar">
     <h1 id="header">Sailplanner</h1>
     <div id="comment">{@html marked(comment)}</div>
-    <LegsTable />
+    <LegsTable on:new={createNewLeg}
+               on:edit={setAction}
+               on:highlight={setAction} />
 
     <fieldset class="settings">
         <legend>Settings</legend>
@@ -60,23 +83,19 @@
         <input type="number" bind:value="{settings.average}" on:change="{updateSettings}" min="0" max="40" />&nbsp;kts<br />
     </fieldset>
 
-    <fieldset id="io" class="settings">
+    <fieldset class="settings">
         <legend>Sharing &amp; editing</legend>
-        <!-- <div id="urls" class="hidden">
-            <div>
-                <strong>URL (read only):</strong>
-                <div id="url-view" class="url">Unsaved</div>
-            </div>
-            <div>
-                <strong>URL (editable):</strong>
-                <div id="url-edit" class="url">Unsaved</div>
-            </div>
-        </div>
-        -->
-        <a class="button" title="Delete everything and start over..." on:click={store.reset}>New</a>
 
-        <!-- <a id="copy" class="button" title="Copy this planner...">Copy</a> -->
-        <a class="button" title="Various export methods" on:click={() => exportPlanner(asGeoJSON)}>Export</a>
+        {#if currentState.legacyUrl}
+            <div>
+                <strong>Legacy URL:</strong> <a href="{currentState.legacyUrl}">{currentState.key}</a>
+            </div>
+            <br>
+        {/if}
+
+        <button class="button" title="Delete everything and start over..." on:click={store.reset}>New</button>
+
+        <button class="button" title="Various export methods" on:click={e => exportPlanner(asGeoJSON)}>Export</button>
         <!-- <a id="save" class="button pull-right" title="Save state planner to the server...">Save</a> -->
     </fieldset>
 
