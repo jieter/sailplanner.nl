@@ -58,7 +58,10 @@
         </tr>
         {#if leg.edit === 'edit'}
             <td colspan="5">
-                <LegEditor {leg} on:save={e => dispatch('edit', {leg: i, value: 'save'})} />
+                <LegEditor {leg}
+                           on:save={e => dispatch('edit', {leg: i, value: 'save'})}
+                           on:delete={e => dispatch('delete', {leg: i, value: true})}
+                />
             </td>
         {/if}
     {/each}
@@ -70,7 +73,8 @@
             <td></td>
             <td></td>
         </tr>
-    {:else}
+    {/if}
+    {#if true}
         <tr>
             <td colspan="5" class="empty">
                 <button class="button" on:click={e => dispatch('new')}>Create leg</button>

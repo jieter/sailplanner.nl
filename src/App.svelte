@@ -23,20 +23,17 @@
     });
 
     onMount(() => {
-        fetch('store/zomer2011.json')
-        .then(response => response.json())
-        .then(function (data) {
-            let newState = transformFromLegacy(data);
-            store.set(newState);
-        });
-    });
+        if (window.location.hash !== '') {
+            const key = window.location.hash.substring(1);
 
-    function updateSettings() {
-        store.update(state => {
-            state.settings = settings;
-            return state;
-        });
-    }
+            fetch(`store/${key}.json`)
+            .then(response => response.json())
+            .then(function (data) {
+                let newState = transformFromLegacy(data);
+                store.set(newState);
+            });
+        }
+    });
 
     function exportPlanner(exporter) {
         let contents = exporter(currentState);
@@ -49,38 +46,25 @@
     }
 
     function setAction(event) {
-        console.log(event.type, event.detail);
         store.update(state => {
             legs[event.detail.leg][event.type] = event.detail.value;
             state.legs = legs;
             return state;
         });
     }
-
-    function createNewLeg() {
-        store.update(state => {
-            legs.push({
-                comment: '',
-                departure: '10:00',
-                edit: 'edit'
-            })
-            state.legs = legs;
-            return state;
-        })
-    }
-
 </script>
 <div id="sidebar">
     <h1 id="header">Sailplanner</h1>
     <div id="comment">{@html marked(comment)}</div>
-    <LegsTable on:new={createNewLeg}
+    <LegsTable on:new={e => store.createLeg()}
                on:edit={setAction}
-               on:highlight={setAction} />
+               on:highlight={setAction}
+               on:delete={setAction} />
 
     <fieldset class="settings">
         <legend>Settings</legend>
         <label for="meansog">Average <abbr title="Speed Over Ground">SOG</abbr>:</label>
-        <input type="number" bind:value="{settings.average}" on:change="{updateSettings}" min="0" max="40" />&nbsp;kts<br />
+        <input type="number" bind:value="{settings.average}" on:change="{e => store.updateSettings(settings)}" min="0" max="40" />&nbsp;kts<br />
     </fieldset>
 
     <fieldset class="settings">

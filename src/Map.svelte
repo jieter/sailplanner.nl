@@ -6,13 +6,13 @@
     import './geoUtil.js';
 
     import { beforeUpdate, onMount } from 'svelte';
-    import { subscribe, update } from './store.js';
+    import store from './store.js';
     import { roundn } from './formatting.js';
 
     let settings;
     let legs;
 
-    subscribe(state => {
+    store.subscribe(state => {
         settings = state.settings;
         legs = state.legs;
     });
@@ -46,35 +46,42 @@
                 layer.removeFrom(map);
             });
         }
+        let toDelete = undefined;
         legs.forEach(function (leg, i) {
+            let style = {
+                color: leg.color,
+                weight: leg.highlight ? (leg.width * 2) : leg.width
+            };
+
             if (!map.hasLayer(layers[i])) {
                 if (leg.path) {
                     layers[i] = L.Polyline.fromEncoded(leg.path)
                 } else if (leg.edit == 'edit') {
-                    layers[i] = map.editTools.startPolyline();
+                    layers[i] = map.editTools.startPolyline(undefined, style);
                 }
             }
             let layer = layers[i];
             layer.addTo(map);
-            layer.setStyle({
-                color: leg.color,
-                weight: leg.highlight ? (leg.width * 2) : leg.width
-            });
 
-            if (leg.edit === 'edit') {
+            if (leg.delete) {
+                layer.removeFrom(map);
+                toDelete = i;
+            } else if (leg.edit === 'edit') {
                 layer.enableEdit(map);
             } else if (leg.edit === 'save') {
                 legs[i].path = layer.encodePath();
                 delete legs[i].edit;
                 layer.disableEdit();
             }
-
+            if (layer._latlngs.length > 1) {
+                layer.setStyle(style);
+            }
             legs[i].dog = roundn(layer.getDistance(), 2);
         });
-        update(state => {
-            state.legs = legs;
-            return state;
-        });
+        if (toDelete !== undefined) {
+            legs.splice(toDelete, 1);
+        }
+        store.updateLegs(legs);
     };
     const resize = () => {
         map.invalidateSize();

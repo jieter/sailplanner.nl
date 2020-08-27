@@ -8,14 +8,15 @@
 
 <fieldset class="settings">
     <legend>Edit leg</legend>
-    <label for="edit-comment">Comment:</label>
+
+    <label>Comment:</label>
     <input type="text" class="wide" bind:value="{leg.comment}">
     <br>
 
-    <label for="edit-departure">Departure:</label>
+    <label>Departure:</label>
     <input type="text" bind:value="{leg.departure}"><br>
 
-    <!-- <label for="submit"><a class="knop" id="leg-delete">delete</a></label> -->
+    <label><button on:click={e => dispatch('delete', {})}>Delete</button></label>
 
     <button class="button" on:click={e => dispatch('save', {})}>Save leg</button>
 </fieldset>
