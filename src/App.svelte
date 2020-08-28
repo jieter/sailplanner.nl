@@ -3,7 +3,7 @@
     import Map from './Map.svelte';
     import LegsTable from './LegsTable.svelte';
     import marked from 'marked';
-    import { asGeoJSON } from './exports.js';
+    import { asGeoJSON, asGPX, asKML } from './exports.js';
     import { transformFromLegacy } from './legacy.js';
     import { onMount } from 'svelte';
     import store from './store.js';
@@ -42,14 +42,18 @@
                 });
         }
     });
-
-    function exportPlanner(exporter) {
-        let contents = exporter(currentState);
+    const exportFormats = {
+        'GeoJSON': asGeoJSON,
+        'GPX': asGPX,
+        'KML': asKML
+    };
+    function exportPlanner(format) {
+        const contents = exportFormats[format](currentState);
 
         let tag = document.createElement('a');
-        tag.href = `data:text/json;charset=utf-8,${encodeURIComponent(JSON.stringify(contents))}`
+        tag.href = `data:text/json;charset=utf-8,${encodeURIComponent(contents)}`
         tag.target = '_blank';
-        tag.download = 'sailplanner.geojson';
+        tag.download = `sailplanner.${format.toLowerCase()}`;
         tag.click();
     }
 
@@ -87,7 +91,15 @@
 
         <button class="button" title="Delete everything and start over..." on:click={store.reset}>New</button>
 
-        <button class="button" title="Various export methods" on:click={e => exportPlanner(asGeoJSON)}>Export</button>
+        <button class="button dropdown" title="Various export methods">
+            Export
+            <div class="formats">
+                {#each Object.keys(exportFormats) as format}
+                    <div class="button" on:click={e => exportPlanner(format)}>{format}</div>
+                {/each}
+            </div>
+
+        </button>
         <!-- <a id="save" class="button pull-right" title="Save state planner to the server...">Save</a> -->
     </fieldset>
 
@@ -104,3 +116,22 @@
     </div>
 </div>
 <Map />
+
+<style>
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    .dropdown::after { content: "▼"; }
+    .dropdown:hover .formats {
+        display: block;
+    }
+    .dropdown .formats {
+        display: none;
+        position: absolute;
+        min-width: 40px;
+        margin-top: 2px;
+        margin-left: -4px;
+        z-index: 1;
+    }
+</style>

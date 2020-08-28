@@ -5,6 +5,7 @@ function transformFromLegacy(old) {
 
     return {
         key: old.data.key,
+        url: 'TODO',
         legacyUrl: old.url,
         comment: options.comment,
         settings: {
@@ -19,7 +20,7 @@ function transformFromLegacy(old) {
                 departure: leg.options.departure,
                 path: leg.path,
                 comment: leg.options.comment,
-                color: leg.options.toLowerCase(),
+                color: leg.options.color.toLowerCase(),
                 width: leg.options.width || 2,
                 speed: leg.options.speed,
             }
