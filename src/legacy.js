@@ -9,7 +9,6 @@ function transformFromLegacy(old) {
         comment: options.comment,
         settings: {
             average: options.average || 5,
-            color: options.color,
             map: {
                 center: options.center.split(" ").map(x => +x),
                 zoom: options.zoom
@@ -20,7 +19,7 @@ function transformFromLegacy(old) {
                 departure: leg.options.departure,
                 path: leg.path,
                 comment: leg.options.comment,
-                color: leg.options.color,
+                color: leg.options.toLowerCase(),
                 width: leg.options.width || 2,
                 speed: leg.options.speed,
             }

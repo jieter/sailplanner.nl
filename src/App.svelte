@@ -24,14 +24,22 @@
 
     onMount(() => {
         if (window.location.hash !== '') {
-            const key = window.location.hash.substring(1);
+            let key = window.location.hash.substring(1);
+            const headers = {};
+            if (key.indexOf('|') > 0) {
+                let authKey;
+                [key, authKey] = key.split('|');
+                headers['Authorization'] = `basic ${authKey}`;
+            }
 
-            fetch(`store/${key}.json`)
-            .then(response => response.json())
-            .then(function (data) {
-                let newState = transformFromLegacy(data);
-                store.set(newState);
-            });
+            fetch(`store/${key}.json`, {headers: headers})
+                .then(response => response.json())
+                .then(function (data) {
+                    if (data.data) {
+                        data = transformFromLegacy(data);
+                    }
+                    store.set(data);
+                });
         }
     });
 

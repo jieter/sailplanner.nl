@@ -11,7 +11,7 @@ const EMPTY = {
 
 const EMPTY_LEG = {
     comment: '',
-    color: '#f00',
+    color: '#ff0000',
     width: 2,
     departure: '10:00',
     edit: 'edit'

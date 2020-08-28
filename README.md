@@ -13,8 +13,9 @@ Navigate to [localhost:5000](http://localhost:5000).
 
 
 ## Todo:
- - [ ] Color picker.
- - [ ] Edit planner comment.
+ - [x] Color picker.
+ - [ ] Leg without points cannot be edited.
+ - [ ] Edit main planner comment.
  - [ ] Make sure only one leg can be edited at one time.
  - [ ] Interaction with the backend.
  - [ ] Export to GPX / KML.
@@ -23,6 +24,7 @@ Navigate to [localhost:5000](http://localhost:5000).
 Technical improvent ideas:
 
 - https://svelte.dev/examples#keyed-each-blocks
+- https://svelte.dev/examples#context-api
 
 Improvements from legacy
 
