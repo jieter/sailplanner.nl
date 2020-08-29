@@ -21,8 +21,7 @@ function transformFromLegacy(old) {
                 path: leg.path,
                 comment: leg.options.comment,
                 color: leg.options.color.toLowerCase(),
-                width: leg.options.width || 2,
-                speed: leg.options.speed,
+                width: leg.options.width || 2
             }
         })
     };

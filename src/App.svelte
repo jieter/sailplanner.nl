@@ -2,7 +2,10 @@
 <script>
     import Map from './Map.svelte';
     import LegsTable from './LegsTable.svelte';
+    import Modal from './Modal.svelte';
+
     import marked from 'marked';
+    import DOMPurify from 'dompurify';
     import { asGeoJSON, asGPX, asKML } from './exports.js';
     import { transformFromLegacy } from './legacy.js';
     import { onMount } from 'svelte';
@@ -11,9 +14,14 @@
     import './planner.css';
 
     let currentState;
+    let key;
+    let authKey;
+    let canEdit = true;
     let comment;
     let legs;
     let settings;
+
+    let modal;
 
     store.subscribe(state => {
         currentState = state;
@@ -23,11 +31,12 @@
     });
 
     onMount(() => {
-        if (window.location.hash !== '') {
-            let key = window.location.hash.substring(1);
+        if (window.location.hash == '') {
+            showModal('prose/quickstart.md');
+        } else {
+            key = window.location.hash.substring(1);
             const headers = {};
             if (key.indexOf('|') > 0) {
-                let authKey;
                 [key, authKey] = key.split('|');
                 headers['Authorization'] = `basic ${authKey}`;
             }
@@ -42,6 +51,34 @@
                 });
         }
     });
+
+    async function save() {
+        let url = '/store/';
+        let headers = {};
+
+        if (authKey) {
+            url = `store/${key}.json`
+            headers['Authorization'] = `basic ${authKey}`;
+        }
+        let response = await fetch(url, {
+            method: 'POST',
+            headers: headers,
+        });
+        if (response.status == 200) {
+            let data = await response.json();
+            store.set(data);
+            authKey = data.authKey;
+        } else {
+            // Error!
+
+        }
+    }
+
+    function showModal(source) {
+        modal.open(source);
+        modal.open();
+    }
+
     const exportFormats = {
         'GeoJSON': asGeoJSON,
         'GPX': asGPX,
@@ -67,7 +104,7 @@
 </script>
 <div id="sidebar">
     <h1 id="header">Sailplanner</h1>
-    <div id="comment">{@html marked(comment)}</div>
+    <div id="comment">{@html DOMPurify.sanitize(marked(comment))}</div>
     <LegsTable on:new={e => store.createLeg()}
                on:edit={setAction}
                on:highlight={setAction}
@@ -89,7 +126,7 @@
             <br>
         {/if}
 
-        <button class="button" title="Delete everything and start over..." on:click={store.reset}>New</button>
+        <button class="button" title="Start over..." on:click={store.reset}>New</button>
 
         <button class="button dropdown" title="Various export methods">
             Export
@@ -98,15 +135,16 @@
                     <div class="button" on:click={e => exportPlanner(format)}>{format}</div>
                 {/each}
             </div>
-
         </button>
-        <!-- <a id="save" class="button pull-right" title="Save state planner to the server...">Save</a> -->
+        {#if canEdit}
+            <button class="button pull-right" title="Save state planner to the server..." on:click={save}>Save</button>
+        {/if}
     </fieldset>
 
     <div id="other">
-        <a id="page-about">About (NL)</a> |
-        <a id="page-howto">Howto</a> |
-        <a id="page-faq">FAQ</a>
+        <a href="#" on:click={e => showModal('prose/about.md')}>About / FAQ</a> |
+        <a href="#" on:click={e => showModal('prose/quickstart.md')}>Quickstart</a> |
+        <a href="#" on:click={e => showModal('prose/howto.md')}>Howto</a>
     </div>
     <div id="disclaimer">
         <h5>Disclaimer</h5>
@@ -114,6 +152,9 @@
         Sailplanner is provided <strong>as is</strong>, no guarantee can be made whatsoever.<br>
         Sailplanner is designed for planning purposes only and should not be used as a navigation aid.
     </div>
+
+    <Modal bind:this={modal} />
+
 </div>
 <Map />
 

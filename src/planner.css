@@ -200,7 +200,7 @@ fieldset.settings select#overlay {
     border-bottom: 2px solid black;
 }
 
-#quickstart {
+#modal {
     position: fixed;
     top: 80px;
     left: 80px;
@@ -216,7 +216,7 @@ fieldset.settings select#overlay {
     line-height: 1.5em;
 }
 
-#quickstart a.close {
+#modal a.close {
     position: absolute;
     display: block;
     width: 14px;
@@ -227,7 +227,7 @@ fieldset.settings select#overlay {
     text-decoration: none;
 }
 
-#quickstart a.close:hover {
+#modal a.close:hover {
     background-color: #eee;
 }
 
