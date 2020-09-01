@@ -3,6 +3,7 @@
     import Map from './Map.svelte';
     import LegsTable from './LegsTable.svelte';
     import Modal from './Modal.svelte';
+    import Url from './Url.svelte';
 
     import marked from 'marked';
     import DOMPurify from 'dompurify';
@@ -48,6 +49,9 @@
                         data = transformFromLegacy(data);
                     }
                     store.set(data);
+
+                    canEdit = data.authKey !== undefined;
+                    console.log(canEdit, data);
                 });
         }
     });
@@ -108,7 +112,8 @@
     <LegsTable on:new={e => store.createLeg()}
                on:edit={setAction}
                on:highlight={setAction}
-               on:delete={setAction} />
+               on:delete={setAction}
+               canEdit={canEdit} />
 
     <fieldset class="settings">
         <legend>Settings</legend>
@@ -121,9 +126,18 @@
 
         {#if currentState.legacyUrl}
             <div>
-                <strong>Legacy URL:</strong> <a href="{currentState.legacyUrl}">{currentState.key}</a>
+                <strong>Legacy URL:</strong> <Url url={currentState.legacyUrl} />
             </div>
-            <br>
+        {/if}
+        {#if currentState.key}
+            <div>
+                <strong>Read only URL:</strong> <Url url={currentState.url} />
+            </div>
+            {#if canEdit}
+                <div>
+                    <strong>Editable URL:</strong> <Url url={currentState.editUrl} />
+                </div>
+            {/if}
         {/if}
 
         <button class="button" title="Start over..." on:click={store.reset}>New</button>

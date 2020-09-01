@@ -1,0 +1,26 @@
+<script>
+    export let url;
+    let input;
+
+    function copy() {
+        input.select();
+        input.setSelectionRange(0, 99999);
+
+        document.execCommand('copy');
+    }
+</script>
+
+<input type="text" class="url" value="{url}" on:click={copy} bind:this={input} />
+<a href="{url}" class="button" target="_blank" title="Open in new tab.">⤤</a>
+
+<style>
+input.url {
+    font-size: 10px;
+    width: 90%;
+    padding: 2px 4px;
+    background-color: #ffffc1;
+    border: 1px solid #bbb;
+    text-align: left;
+    margin-bottom: 4px;
+}
+</style>

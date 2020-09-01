@@ -5,6 +5,7 @@
     import LegEditor from './LegEditor.svelte';
 
     const dispatch = createEventDispatcher();
+    export let canEdit = false;
 
     let settings;
     let legs;
@@ -56,7 +57,7 @@
             <td class="eta">{formatDuration((leg.dog / settings.average) + departure(leg.departure))}</td>
             <td class="color" style="background-color: {leg.color};">&nbsp;</td>
         </tr>
-        {#if leg.edit === 'edit'}
+        {#if leg.edit === 'edit' && canEdit}
             <td colspan="5">
                 <LegEditor {leg}
                            on:save={e => dispatch('edit', {leg: i, value: 'save'})}
@@ -74,7 +75,7 @@
             <td></td>
         </tr>
     {/if}
-    {#if true}
+    {#if canEdit}
         <tr>
             <td colspan="5" class="empty">
                 <button class="button" on:click={e => dispatch('new')}>Create leg</button>
