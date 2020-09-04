@@ -1,6 +1,10 @@
 import { writable } from "svelte/store";
 
 const EMPTY = {
+    key: undefined,
+    authKey: undefined,
+    url: undefined,
+    editUrl: undefined,
     comment: "",
     settings: {
         average: 5,
@@ -19,9 +23,9 @@ const EMPTY_LEG = {
 
 export const { subscribe, set, update } = writable(EMPTY);
 
-const addLeg = leg => update(state => {
-    state.legs = [...state.legs, leg];
-    return state;
+const addLeg = leg => update(s => {
+    s.legs = [...s.legs, leg];
+    return s;
 });
 
 export const createLeg = () => {
@@ -31,18 +35,59 @@ export const createLeg = () => {
 const reset = () => { set(EMPTY); };
 
 export const updateSettings = (settings) => {
-    update(state => {
-        state.settings = settings;
-        return state;
+    update(s => {
+        s.settings = settings;
+        return s;
     })
 }
 
 export const updateLegs = (legs) => {
-    update(state => {
-        state.legs = legs;
-        return state;
+    update(s => {
+        s.legs = legs;
+        return s;
     })
 }
+
+export const fork = () => {
+    update(s => {
+        s.authKey = undefined;
+        s.key = undefined;
+        s.url = undefined;
+        s.editUrl = undefined;
+        return s;
+    });
+}
+
+let state;
+subscribe(s => state = s);
+
+const API_URL = 'store.php'
+
+export const save = async() => {
+    let url;
+    let headers = {
+        'Content-Type': 'application/json'
+    };
+
+    if (state.authKey) {
+        url = `${API_URL}?key=${state.key}`
+        headers['Authorization'] = `basic ${state.authKey}`;
+    } else {
+        url = API_URL;
+    }
+    let response = await fetch(url, {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify(state)
+    });
+    if (response.status == 200) {
+        set(await response.json());
+        return true;
+    } else {
+        // Error!
+        return false;
+    }
+};
 
 export default {
     subscribe,
@@ -52,5 +97,7 @@ export default {
     addLeg,
     createLeg,
     updateSettings,
-    updateLegs
+    updateLegs,
+    fork,
+    save,
 }

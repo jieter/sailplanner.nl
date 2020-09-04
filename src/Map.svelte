@@ -28,6 +28,15 @@
             zoom: settings.map.zoom,
             editable: true
         });
+        map.on('zoomend moveend', e => {
+            settings.map.zoom = map.getZoom();
+            let center = map.getCenter();
+            settings.map.center = [center.lat, center.lng];
+            store.update(s => {
+                s.settings = settings;
+                return s;
+            });
+        })
         L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
@@ -41,6 +50,9 @@
     // Keep map layers created in this array.
     let layers = [];
     $: {
+        if (map) {
+            map.setView(settings.map.center, settings.map.zoom);
+        }
         if (legs.length == 0) {
             layers.forEach(function (layer) {
                 layer.removeFrom(map);

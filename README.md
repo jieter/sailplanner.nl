@@ -73,10 +73,9 @@ No authorization is required, the body is saved in the store, it is returned inc
  - [x] Color picker.
  - [ ] Leg without points cannot be edited.
  - [ ] Edit main planner comment.
- - [ ] Make sure only one leg can be edited at one time.
- - [ ] Interaction with the backend.
- - [ ] Export to GPX / KML.
- - [ ] Read only mode.
+ - [x] Interaction with the backend.
+ - [x] Export to GPX / KML.
+ - [x] Read only mode.
 
 Technical improvent ideas:
 

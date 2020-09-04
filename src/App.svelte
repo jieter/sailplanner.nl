@@ -14,9 +14,7 @@
 
     import './planner.css';
 
-    let currentState;
-    let key;
-    let authKey;
+    let state;
     let canEdit = true;
     let comment;
     let legs;
@@ -24,58 +22,47 @@
 
     let modal;
 
-    store.subscribe(state => {
-        currentState = state;
-        comment = state.comment;
-        settings = state.settings;
-        legs = state.legs;
+    store.subscribe(s => {
+        state = s;
+        comment = s.comment;
+        settings = s.settings;
+        legs = s.legs;
     });
 
     onMount(() => {
         if (window.location.hash == '') {
             showModal('prose/quickstart.md');
         } else {
-            key = window.location.hash.substring(1);
+            let key = window.location.hash.substring(1);
+            console.log(key);
             const headers = {};
             if (key.indexOf('|') > 0) {
+                let authKey;
                 [key, authKey] = key.split('|');
                 headers['Authorization'] = `basic ${authKey}`;
             }
 
-            fetch(`store/${key}.json`, {headers: headers})
-                .then(response => response.json())
-                .then(function (data) {
-                    if (data.data) {
-                        data = transformFromLegacy(data);
+            fetch(`store.php?key=${key}`, {headers: headers})
+                .then(response => {
+                    if (response.status == 404) {
+                        return fetch(`http://sailplanner.nl/getLegs/key:${key}`)
+                            .then(response => response.json())
+                            .then(data => transformFromLegacy(data))
+                    } else {
+                        return response.json();
                     }
+                })
+                .then(function (data) {
                     store.set(data);
-
                     canEdit = data.authKey !== undefined;
-                    console.log(canEdit, data);
+                    console.log(data.settings);
                 });
         }
     });
 
-    async function save() {
-        let url = '/store/';
-        let headers = {};
-
-        if (authKey) {
-            url = `store/${key}.json`
-            headers['Authorization'] = `basic ${authKey}`;
-        }
-        let response = await fetch(url, {
-            method: 'POST',
-            headers: headers,
-        });
-        if (response.status == 200) {
-            let data = await response.json();
-            store.set(data);
-            authKey = data.authKey;
-        } else {
-            // Error!
-
-        }
+    function fork() {
+        store.fork();
+        canEdit = true;
     }
 
     function showModal(source) {
@@ -89,7 +76,7 @@
         'KML': asKML
     };
     function exportPlanner(format) {
-        const contents = exportFormats[format](currentState);
+        const contents = exportFormats[format](state);
 
         let tag = document.createElement('a');
         tag.href = `data:text/json;charset=utf-8,${encodeURIComponent(contents)}`
@@ -99,10 +86,10 @@
     }
 
     function setAction(event) {
-        store.update(state => {
+        store.update(s => {
             legs[event.detail.leg][event.type] = event.detail.value;
-            state.legs = legs;
-            return state;
+            s.legs = legs;
+            return s;
         });
     }
 </script>
@@ -124,23 +111,31 @@
     <fieldset class="settings">
         <legend>Sharing &amp; editing</legend>
 
-        {#if currentState.legacyUrl}
+        {#if state.legacyUrl}
             <div>
-                <strong>Legacy URL:</strong> <Url url={currentState.legacyUrl} />
+                <strong>Legacy URL:</strong>
+                {#if !canEdit}
+                    <p>
+                        This is a legacy planner. Use the 'Copy' button below to transfer it to the current version.
+                        It will receive a new url.
+                    </p>
+                {/if}
+                <Url url={state.legacyUrl} />
             </div>
         {/if}
-        {#if currentState.key}
+        {#if state.key}
             <div>
-                <strong>Read only URL:</strong> <Url url={currentState.url} />
+                <strong>Read only URL:</strong> <Url url={state.url} />
             </div>
             {#if canEdit}
                 <div>
-                    <strong>Editable URL:</strong> <Url url={currentState.editUrl} />
+                    <strong>Editable URL:</strong> <Url url={state.editUrl} />
                 </div>
             {/if}
         {/if}
 
         <button class="button" title="Start over..." on:click={store.reset}>New</button>
+        <button class="button" title="Copy this planner..." on:click={fork}>Copy</button>
 
         <button class="button dropdown" title="Various export methods">
             Export
@@ -151,7 +146,7 @@
             </div>
         </button>
         {#if canEdit}
-            <button class="button pull-right" title="Save state planner to the server..." on:click={save}>Save</button>
+            <button class="button pull-right" title="Save state planner to the server..." on:click={store.save}>Save</button>
         {/if}
     </fieldset>
 

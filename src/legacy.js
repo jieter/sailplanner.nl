@@ -1,18 +1,16 @@
 /* Take a json of legacy sailplanner.nl and turn into the current format.
  */
 function transformFromLegacy(old) {
-    let options = old.data.options;
+    const options = old.data.options;
 
-    return {
-        key: old.data.key,
-        url: 'TODO',
-        legacyUrl: old.url,
+    let data = {
+        legacyUrl: old.url.replace('\/', '/'),
         comment: options.comment,
         settings: {
             average: options.average || 5,
             map: {
-                center: options.center.split(" ").map(x => +x),
-                zoom: options.zoom
+                center: options.center.split(',').map(x => +x),
+                zoom: options.zoomlevel
             }
         },
         legs: old.data.legs.map(function(leg) {
@@ -25,6 +23,7 @@ function transformFromLegacy(old) {
             }
         })
     };
+    return data;
 }
 
 export { transformFromLegacy };

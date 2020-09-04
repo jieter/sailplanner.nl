@@ -1,0 +1,114 @@
+{
+    "legacyUrl": "http://sailplanner.nl/view/key:zomer2011",
+    "comment": "Zomerzeilen 2011.\nRondje Noordzee met Schotland, Noorwegen en wellicht Denemarken.\n\n",
+    "settings": { "average": 5, "map": { "center": [null] } },
+    "legs": [{
+            "departure": "14:00",
+            "path": "i|oaIqyxa@|GqVpMxCjPjOfaCfw^m`Rzh|AekAxqAwLiGaMnQeLtNoP~Y}R~Tec@ePsv@xnCq`@hp@kh@pnB_qC|fGyw@`rIp}BdxS~xAlTpKlEyDdIoCvI",
+            "comment": "Lemmer - Den Helder",
+            "color": "#ff00ff",
+            "width": 2,
+            "dog": 38.45,
+            "highlight": false
+        },
+        {
+            "departure": "11:00",
+            "path": "wagbIcwd\\fMqVa^iRs^a@{w@b~Edw@dhHveBxiEnE~lEcxqIreob@gG`xA{CpLmGnH{C`Y",
+            "comment": "Den Helder - Hartlepool",
+            "color": "#ffbf00",
+            "width": 2,
+            "dog": 238.49,
+            "highlight": false
+        },
+        {
+            "departure": "10:00",
+            "path": "qixlIdohFz@a`EawAmEaeGnmH{ufDlaqAqd@|x@kz@flA",
+            "comment": "Hartlepool - Holy island",
+            "color": "#0000ff",
+            "width": 2,
+            "dog": 59.66,
+            "highlight": false
+        },
+        {
+            "departure": "17:00",
+            "path": "}vmrI|obIe_l@h_o@afs@vwxBpHn~u@~{N|p_B??",
+            "comment": "Holy Island - Incholm",
+            "color": "#7fff00",
+            "width": 2,
+            "dog": 69.22,
+            "highlight": false
+        },
+        {
+            "departure": "12:00",
+            "path": "er~tItldS|Vtf@ppD}cHn{@yaGxH{@zMmEcTz@iiGwqO",
+            "comment": "Margriet ophalen",
+            "color": "#f000ff",
+            "width": 2,
+            "dog": 8.42
+        },
+        {
+            "departure": "12:00",
+            "path": "wb_uIp{aRicb@kyjBy_QsxJekbDirrBgxcA}hc@t@|_Dq]pkCnQjb@",
+            "comment": "Naar Peterhead",
+            "color": "#ff0000",
+            "width": 2,
+            "dog": 105.03,
+            "highlight": false
+        },
+        {
+            "departure": "10:00",
+            "path": "{|`~IvkyI{an@}re@evwAz~eBasl@bwzD??",
+            "comment": "Naar Dennis Wicked",
+            "color": "#00ff00",
+            "width": 2,
+            "dog": 81.23
+        },
+        {
+            "departure": "10:00",
+            "path": "qtucJ~gyQ_cgCq|ur@q_MatyArkNa{@t|\\pqR????",
+            "comment": "Naar Stavanger",
+            "color": "#4b0082",
+            "width": 2,
+            "dog": 296.08,
+            "highlight": false
+        },
+        {
+            "departure": "10:00",
+            "path": "a}|fJoy{`@d_Ztbs@nh{@_qX`a\\qkkAhy[ow`Bhad@g|z@xpAmmj@c{FucAayDvfF??",
+            "comment": "Naar Farsund",
+            "color": "#ff0000",
+            "width": 2,
+            "dog": 90.68
+        },
+        {
+            "departure": "10:00",
+            "path": "qtsaJqxvh@jfjAi}Llt|Fsia@nojDg_eBtm`@_}x@_bS{byAxsBikS",
+            "comment": "Naar Esbjerg(sla)",
+            "color": "#ffbf00",
+            "width": 2,
+            "dog": 192.03,
+            "highlight": false
+        },
+        {
+            "departure": "10:00",
+            "path": "kllqIsfqr@jtP_pUpq_Ffp`MlbwB`p~Gf_d@wqm@pdSys^n_Fj}AvdE{pC`V}|JxeBiqExwB}wFzeBypN?gC",
+            "comment": "En Harlingen",
+            "color": "#0000ff",
+            "width": 2,
+            "dog": 211.65
+        },
+        {
+            "departure": "10:00",
+            "path": "wvpcI{f_`@zuEdwBpfExeA|cDhoFpi@ha@rdAwg@zmX_fB~~IfbEbyCwkJtyDi`]oyA_m_@wIoMwMkDyG|W",
+            "comment": "Terug naar Lemmer",
+            "color": "#00ff00",
+            "width": 2,
+            "dog": 33.8,
+            "highlight": false
+        }
+    ],
+    "key": "zomer2011",
+    "authKey": "6ef207a08f04",
+    "url": "http://sailplanner.nl/#zomer2011",
+    "editUrl": "http://sailplanner.nl/#zomer2011|6ef207a08f04"
+}
