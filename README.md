@@ -42,12 +42,19 @@ No authorization is required, the body is saved in the store, it is returned inc
 ### JSON structure:
 ```JSON
 {
+    // Unique key to retrieve a planner. Alphanumerical, usually part of a md5 hash.
     "key": "<key>",
-    "authKey": "<authKey>", // If the planner is requested with the correct auth key,
-                            // or a new planenr is created, the authKey is supplied here.
-    "parent": "<key>",  // optionally the key the planner was copied from.
-    "url": "https://sailplanner.nl/#<key>",  // URL pointing to the current implementation.
-    "legacyUrl": "https://sailplanner.nl/view/#<key>",  // URL pointing to the old UI implementation.
+    // If the planner is requested with the correct auth key,
+    // or a new planner is created, the authKey is supplied here.
+    "authKey": "<authKey>",
+    // optionally the key the planner was copied from.
+    "parent": "<key>",
+    // URL pointing to the current/new implementation, read-only.
+    "url": "http://sailplanner.nl/#<key>",
+    // URL which allows changing the data.
+    "editUrl": "http://sailplanner.nl/#<key>|<authKey>",
+    // URL pointing to the legacy/old UI implementation.
+    "legacyUrl": "https://sailplanner.nl/view/#<key>",
     "comment": "Comment, markdown allowed.",
     "settings": {
         "average": 5,  // average speed over ground (SOG)
@@ -62,7 +69,7 @@ No authorization is required, the body is saved in the store, it is returned inc
             "path": "<< encode path >>",
             "comment": "Description of leg",
             "color": "#123456",
-            "width": 2,  // line with, number of pixels
+            "width": 2,  // line width, in pixels
         },
         {}
     ]
@@ -76,6 +83,8 @@ No authorization is required, the body is saved in the store, it is returned inc
  - [x] Interaction with the backend.
  - [x] Export to GPX / KML.
  - [x] Read only mode.
+ - [ ] Update `location.hash` on key changes, watch it for changes too.
+
 
 Technical improvent ideas:
 

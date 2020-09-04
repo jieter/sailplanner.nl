@@ -31,7 +31,7 @@ No, but you can use the copy button to copy the planner and save it to the serve
 
 Maybe sometime in the future.
 
-> Sailplanner does not work for me... Whats wrong?
+> Sailplanner does not work for me... What's wrong?
 
 Sailplanner is still under development.
 I'm trying hard to provide a bug-free website online, but every now and then it might be broken for a while.
