@@ -1,5 +1,7 @@
 <script>
+    export let label;
     export let url;
+
     let input;
 
     function copy() {
@@ -10,8 +12,13 @@
     }
 </script>
 
-<input type="text" class="url" value="{url}" on:click={copy} bind:this={input} />
-<a href="{url}" class="button" target="_blank" title="Open in new tab.">⤤</a>
+<div>
+    <strong>{label}</strong>
+    <slot></slot>
+    <input type="text" class="url" value="{url}" on:click={copy} bind:this={input} />
+    <a href="{url}" class="button" target="_blank" title="Open in new tab.">⤤</a>
+</div>
+
 
 <style>
 input.url {

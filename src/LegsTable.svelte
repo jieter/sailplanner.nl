@@ -48,7 +48,7 @@
     {#each legs as leg, i}
         <tr on:mouseenter={e => dispatch('highlight', {leg: i, value: true})}
             on:mouseleave={e => dispatch('highlight', {leg: i, value: false})}
-            on:click={e => dispatch('edit', {leg: i, value: leg.edit === 'edit' ? 'save' : 'edit'})}
+            on:click={e => {if (canEdit) { dispatch('edit', {leg: i, value: leg.edit === 'edit' ? 'save' : 'edit'})} }}
         >
             <td class="start">{leg.departure}</td>
             <td class="comment">{leg.comment}</td>

@@ -104,7 +104,7 @@
 
     <fieldset class="settings">
         <legend>Settings</legend>
-        <label for="meansog">Average <abbr title="Speed Over Ground">SOG</abbr>:</label>
+        <label>Average <abbr title="Speed Over Ground">SOG</abbr>:</label>
         <input type="number" bind:value="{settings.average}" on:change="{e => store.updateSettings(settings)}" min="0" max="40" />&nbsp;kts<br />
     </fieldset>
 
@@ -112,25 +112,19 @@
         <legend>Sharing &amp; editing</legend>
 
         {#if state.legacyUrl}
-            <div>
-                <strong>Legacy URL:</strong>
+            <Url label="Legacy URL:" url={state.legacyUrl}>
                 {#if !canEdit}
                     <p>
                         This is a legacy planner. Use the 'Copy' button below to transfer it to the current version.
                         It will receive a new url.
                     </p>
                 {/if}
-                <Url url={state.legacyUrl} />
-            </div>
+            </Url>
         {/if}
         {#if state.key}
-            <div>
-                <strong>Read only URL:</strong> <Url url={state.url} />
-            </div>
+            <Url label="Read only URL:" url={state.url} />
             {#if canEdit}
-                <div>
-                    <strong>Editable URL:</strong> <Url url={state.editUrl} />
-                </div>
+                <Url label="Editable URL:" url={state.editUrl} />
             {/if}
         {/if}
 
