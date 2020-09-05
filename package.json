@@ -28,7 +28,7 @@
     },
     "dependencies": {
         "dompurify": "^2.0.14",
-        "leaflet": "^1.6.0",
+        "leaflet": "^1.7.1",
         "leaflet-editable": "^1.2.0",
         "marked": "^1.1.1",
         "polyline-encoded": "0.0.9",

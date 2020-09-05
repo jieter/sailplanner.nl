@@ -15,7 +15,7 @@ Navigate to [localhost:5000](http://localhost:5000).
 
 ### Retrieve an existing planner
 
-`GET /store/<key>.json`
+`GET store.php?key=<key>`
 
 Response contains the JSON representation of a planner instance, described below.
 
@@ -23,7 +23,7 @@ If headers: `Authorization: basic <authKey>` are supplied, the response also con
 
 ### Update an existing planner
 
-`POST /store/<key>.json`, headers: `Authorization: basic <authKey>`.
+`POST store.php?key=<key>`, headers: `Authorization: basic <authKey>`.
 
 Update the state of the planner with JSON in body.
 
@@ -35,12 +35,12 @@ The server replies with status code `401`, and body `{"success": false, "message
 
 ### Create a new planner
 
-`POST /store/`
+`POST store.php`
 
 No authorization is required, the body is saved in the store, it is returned including the `authKey` key.
 
 ### JSON structure:
-```JSON
+```
 {
     // Unique key to retrieve a planner. Alphanumerical, usually part of a md5 hash.
     "key": "<key>",
@@ -79,7 +79,7 @@ No authorization is required, the body is saved in the store, it is returned inc
 ## Todo:
  - [x] Color picker.
  - [ ] Leg without points cannot be edited.
- - [ ] Edit main planner comment.
+ - [x] Edit main planner comment.
  - [x] Interaction with the backend.
  - [x] Export to GPX / KML.
  - [x] Read only mode.

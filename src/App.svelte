@@ -4,9 +4,9 @@
     import LegsTable from './LegsTable.svelte';
     import Modal from './Modal.svelte';
     import Url from './Url.svelte';
+    import Comment from './Comment.svelte';
 
-    import marked from 'marked';
-    import DOMPurify from 'dompurify';
+
     import { asGeoJSON, asGPX, asKML } from './exports.js';
     import { transformFromLegacy } from './legacy.js';
     import { onMount } from 'svelte';
@@ -95,7 +95,7 @@
 </script>
 <div id="sidebar">
     <h1 id="header">Sailplanner</h1>
-    <div id="comment">{@html DOMPurify.sanitize(marked(comment))}</div>
+    <Comment comment={comment} canEdit={canEdit} />
     <LegsTable on:new={e => store.createLeg()}
                on:edit={setAction}
                on:highlight={setAction}
@@ -136,15 +136,16 @@
 
         <button class="button" title="Start over..." on:click={store.reset}>New</button>
         <button class="button" title="Copy this planner..." on:click={fork}>Copy</button>
-
-        <button class="button dropdown" title="Various export methods">
-            Export
-            <div class="formats">
-                {#each Object.keys(exportFormats) as format}
-                    <div class="button" on:click={e => exportPlanner(format)}>{format}</div>
-                {/each}
-            </div>
-        </button>
+        {#if legs.length > 0}
+            <button class="button dropdown" title="Various export methods">
+                Export
+                <div class="formats">
+                    {#each Object.keys(exportFormats) as format}
+                        <div class="button" on:click={e => exportPlanner(format)}>{format}</div>
+                    {/each}
+                </div>
+            </button>
+        {/if}
         {#if canEdit}
             <button class="button pull-right" title="Save state planner to the server..." on:click={store.save}>Save</button>
         {/if}
