@@ -32,7 +32,7 @@
         let hours, minutes;
         [hours, minutes] = time.split(':');
 
-		return +hours + (+minutes / 60, 1);
+        return +hours + (+minutes / 60);
     };
 </script>
 
@@ -52,10 +52,14 @@
         >
             <td class="start">{leg.departure}</td>
             <td class="comment">{leg.comment}</td>
-            <td class="dog">{smartRound(leg.dog)}</td>
-            <td class="ttg">{formatDuration(leg.dog / settings.average)}</td>
-            <td class="eta">{formatDuration((leg.dog / settings.average) + departure(leg.departure))}</td>
-            <td class="color" style="background-color: {leg.color};">&nbsp;</td>
+            {#if leg.dog > 0}
+                <td class="dog">{smartRound(leg.dog)}</td>
+                <td class="ttg">{formatDuration(leg.dog / settings.average)}</td>
+                <td class="eta">{formatDuration((leg.dog / settings.average) + departure(leg.departure))}</td>
+                <td class="color" style="background-color: {leg.color};">&nbsp;</td>
+            {:else}
+                <td colspan="4"></td>
+            {/if}
         </tr>
         {#if leg.edit === 'edit' && canEdit}
             <td colspan="5">
