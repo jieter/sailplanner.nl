@@ -78,7 +78,7 @@ No authorization is required, the body is saved in the store, it is returned inc
 
 ## Todo:
  - [x] Color picker.
- - [ ] Leg without points cannot be edited.
+ - [x] Leg without points cannot be edited.
  - [x] Edit main planner comment.
  - [x] Interaction with the backend.
  - [x] Export to GPX / KML.
@@ -93,7 +93,8 @@ Technical improvent ideas:
 - https://svelte.dev/examples#context-api
 
 Improvements from legacy
-
+ - [ ] Show dirty state on global / leg
+ - [ ] Cancel changes for one leg.
  - [ ] Reorganize order of legs
  - [ ] Autosave
  - [ ] Undo/redo?

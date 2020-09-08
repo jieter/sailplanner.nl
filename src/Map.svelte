@@ -71,7 +71,12 @@
                 } else if (leg.edit == 'edit') {
                     layers[i] = map.editTools.startPolyline(undefined, style);
                 }
+            } else {
+                if (leg.edit == 'edit' && layers[i].getLatLngs().length == 0) {
+                    layers[i] = map.editTools.startPolyline(undefined, style);
+                }
             }
+
             let layer = layers[i];
             layer.addTo(map);
 
