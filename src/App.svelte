@@ -31,7 +31,10 @@
 
     onMount(() => {
         if (window.location.hash == '') {
-            showModal('prose/quickstart.md');
+            if (localStorage.getItem('quickstart-shown') != 'yes') {
+                showModal('prose/quickstart.md');
+                localStorage.setItem('quickstart-shown', 'yes');
+            }
         } else {
             let key = window.location.hash.substring(1);
 
