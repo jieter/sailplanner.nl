@@ -10,7 +10,8 @@
     "scripts": {
         "build": "rollup -c",
         "dev": "rollup -c -w",
-        "start": "sirv public"
+        "start": "sirv public",
+        "publish": "npm run build && rsync -a public/ jieter@jieter.nl:/srv/www/sailplanner.nl/htdocs/beta"
     },
     "eslintConfig": {
         "extends": "@sveltejs"
