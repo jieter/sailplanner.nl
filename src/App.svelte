@@ -34,7 +34,7 @@
             showModal('prose/quickstart.md');
         } else {
             let key = window.location.hash.substring(1);
-            console.log(key);
+
             const headers = {};
             if (key.indexOf('|') > 0) {
                 let authKey;
@@ -55,7 +55,6 @@
                 .then(function (data) {
                     store.set(data);
                     canEdit = data.authKey !== undefined;
-                    console.log(data.settings);
                 });
         }
     });

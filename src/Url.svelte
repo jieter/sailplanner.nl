@@ -21,13 +21,13 @@
 
 
 <style>
-input.url {
-    font-size: 10px;
-    width: 90%;
-    padding: 2px 4px;
-    background-color: #ffffc1;
-    border: 1px solid #bbb;
-    text-align: left;
-    margin-bottom: 4px;
-}
+    .url {
+        font-size: 10px;
+        width: 90%;
+        padding: 2px 4px;
+        background-color: #ffffc1;
+        border: 1px solid #bbb;
+        text-align: left;
+        margin-bottom: 4px;
+    }
 </style>
