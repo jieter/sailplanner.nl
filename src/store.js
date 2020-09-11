@@ -1,8 +1,9 @@
 import { writable } from "svelte/store";
+import { transformFromLegacy } from './legacy.js';
 
 const EMPTY = {
     key: undefined,
-    authKey: undefined,
+    authToken: undefined,
     url: undefined,
     editUrl: undefined,
     comment: "",
@@ -22,6 +23,9 @@ const EMPTY_LEG = {
 }
 
 export const { subscribe, set, update } = writable(EMPTY);
+
+let state;
+subscribe(s => state = s);
 
 const addLeg = leg => update(s => {
     s.legs = [...s.legs, leg];
@@ -50,7 +54,7 @@ export const updateLegs = (legs) => {
 
 export const fork = () => {
     update(s => {
-        s.authKey = undefined;
+        s.authToken = null;
         s.key = undefined;
         s.url = undefined;
         s.editUrl = undefined;
@@ -58,10 +62,26 @@ export const fork = () => {
     });
 }
 
-let state;
-subscribe(s => state = s);
-
 const API_URL = 'store.php'
+
+export const load = async(key, authToken) => {
+    let headers = {
+        'Authorization': `basic ${authToken}`
+    };
+
+    let data = await fetch(`${API_URL}?key=${key}`, { headers: headers })
+        .then(response => {
+            if (response.status == 404) {
+                return fetch(`http://sailplanner.nl/getLegs/key:${key}`)
+                    .then(response => response.json())
+                    .then(data => transformFromLegacy(data))
+            } else {
+                return response.json();
+            }
+        });
+
+    set(data);
+};
 
 export const save = async() => {
     let url;
@@ -69,9 +89,9 @@ export const save = async() => {
         'Content-Type': 'application/json'
     };
 
-    if (state.authKey) {
+    if (state.authToken) {
         url = `${API_URL}?key=${state.key}`
-        headers['Authorization'] = `basic ${state.authKey}`;
+        headers['Authorization'] = `basic ${state.authToken}`;
     } else {
         url = API_URL;
     }
@@ -82,8 +102,9 @@ export const save = async() => {
     });
     if (response.status == 200) {
         set(await response.json());
-        return true;
+        return `${state.key}|${state.authToken}`;
     } else {
+
         // Error!
         return false;
     }
@@ -100,4 +121,5 @@ export default {
     updateLegs,
     fork,
     save,
+    load,
 }

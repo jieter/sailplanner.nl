@@ -1,7 +1,7 @@
 {
     "legacyUrl": "http://sailplanner.nl/view/key:zomer2011",
     "comment": "Zomerzeilen 2011.\nRondje Noordzee met Schotland, Noorwegen en wellicht Denemarken.\n\n",
-    "settings": { "average": 5, "map": { "center": [null] } },
+    "settings": { "average": 5, "map": { "center": [52, 4] } },
     "legs": [{
             "departure": "14:00",
             "path": "i|oaIqyxa@|GqVpMxCjPjOfaCfw^m`Rzh|AekAxqAwLiGaMnQeLtNoP~Y}R~Tec@ePsv@xnCq`@hp@kh@pnB_qC|fGyw@`rIp}BdxS~xAlTpKlEyDdIoCvI",
@@ -108,7 +108,7 @@
         }
     ],
     "key": "zomer2011",
-    "authKey": "6ef207a08f04",
+    "authToken": "6ef207a08f04",
     "url": "http://sailplanner.nl/#zomer2011",
     "editUrl": "http://sailplanner.nl/#zomer2011|6ef207a08f04"
 }

@@ -8,17 +8,16 @@
 
 
     import { asGeoJSON, asGPX, asKML } from './exports.js';
-    import { transformFromLegacy } from './legacy.js';
     import { onMount } from 'svelte';
     import store from './store.js';
 
     import './planner.css';
 
     let state;
-    let canEdit = true;
     let comment;
     let legs;
     let settings;
+    let canEdit;
 
     let modal;
 
@@ -27,7 +26,23 @@
         comment = s.comment;
         settings = s.settings;
         legs = s.legs;
+        canEdit = s.authToken || s.authToken === null;
     });
+
+    async function loadFromHash() {
+        let key = window.location.hash.substring(1);
+        let authToken;
+
+        if (key == '') {
+            return;
+        }
+
+        const headers = {};
+        if (key.indexOf('|') > 0) {
+            [key, authToken] = key.split('|');
+        }
+        store.load(key, authToken);
+    }
 
     onMount(() => {
         if (window.location.hash == '') {
@@ -36,40 +51,26 @@
                 localStorage.setItem('quickstart-shown', 'yes');
             }
         } else {
-            let key = window.location.hash.substring(1);
-
-            const headers = {};
-            if (key.indexOf('|') > 0) {
-                let authKey;
-                [key, authKey] = key.split('|');
-                headers['Authorization'] = `basic ${authKey}`;
-            }
-
-            fetch(`store.php?key=${key}`, {headers: headers})
-                .then(response => {
-                    if (response.status == 404) {
-                        return fetch(`http://sailplanner.nl/getLegs/key:${key}`)
-                            .then(response => response.json())
-                            .then(data => transformFromLegacy(data))
-                    } else {
-                        return response.json();
-                    }
-                })
-                .then(function (data) {
-                    store.set(data);
-                    canEdit = data.authKey !== undefined;
-                });
+            loadFromHash();
         }
+        window.onhashchange = loadFromHash;
     });
 
     function fork() {
         store.fork();
-        canEdit = true;
+        window.location.hash = '';
+    }
+
+    async function save() {
+        let hash = await store.save();
+
+        if (hash) {
+            window.location.hash = hash;
+        }
     }
 
     function showModal(source) {
         modal.open(source);
-        modal.open();
     }
 
     const exportFormats = {
@@ -125,7 +126,7 @@
         {/if}
         {#if state.key}
             <Url label="Read only URL:" url={state.url} />
-            {#if canEdit}
+            {#if state.editUrl}
                 <Url label="Editable URL:" url={state.editUrl} />
             {/if}
         {/if}
@@ -143,7 +144,7 @@
             </button>
         {/if}
         {#if canEdit}
-            <button class="button pull-right" title="Save state planner to the server..." on:click={store.save}>Save</button>
+            <button class="button pull-right" title="Save state planner to the server..." on:click={save}>Save</button>
         {/if}
     </fieldset>
 

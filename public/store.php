@@ -25,7 +25,7 @@ if ($key) {
     }
 }
 if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-    $authKey = explode(' ', $_SERVER['HTTP_AUTHORIZATION'])[1];
+    $authToken = explode(' ', $_SERVER['HTTP_AUTHORIZATION'])[1];
 }
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -36,21 +36,21 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         if ($data['key'] != $key) {
             error('Key in payload is not equal to key in URL.', 406);
         }
-        if (!$authKey) {
+        if (!$authToken) {
             incorrect_credentials();
         }
 
         $current = json_decode(file_get_contents($filename), true);
-        if ($current['authKey'] != $authKey) {
+        if ($current['authToken'] != $authToken) {
             incorrect_credentials();
         }
     } else {
         // Create a new planner
         $key = $data['key'] = substr(md5(microtime()), 0, 12);
-        $authKey = $data['authKey'] = substr(md5(microtime()), 0, 12);
+        $authToken = $data['authToken'] = substr(md5(microtime()), 0, 12);
 
         $url = $data['url'] = "http://sailplanner.nl/beta/#$key";
-        $data['editUrl'] = "$url|$authKey";
+        $data['editUrl'] = "$url|$authToken";
 
         $filename = get_filename($data['key']);
     }
@@ -63,10 +63,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     }
     $data = json_decode(file_get_contents($filename), true);
 
-    // If no authKey is supplied, or it is not equal to the authKey stored,
+    // If no authToken is supplied, or it is not equal to the authToken stored,
     // do not leak them anyway.
-    if ($data['authKey'] != $authKey) {
-        unset($data['authKey']);
+    if ($data['authToken'] != $authToken) {
+        unset($data['authToken']);
         unset($data['editUrl']);
     }
 }
