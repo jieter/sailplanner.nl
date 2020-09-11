@@ -82,7 +82,7 @@
         const contents = exportFormats[format](state);
 
         let tag = document.createElement('a');
-        tag.href = `data:text/json;charset=utf-8,${encodeURIComponent(contents)}`
+        tag.href = `data:text/json;charset=utf-8,${encodeURIComponent(contents)}`;
         tag.target = '_blank';
         tag.download = `sailplanner.${format.toLowerCase()}`;
         tag.click();
@@ -130,10 +130,10 @@
                 <Url label="Editable URL:" url={state.editUrl} />
             {/if}
         {/if}
-
-        <button class="button" title="Start over..." on:click={store.reset}>New</button>
-        <button class="button" title="Copy this planner..." on:click={fork}>Copy</button>
         {#if legs.length > 0}
+            <button class="button" title="Start over..." on:click={store.reset}>New</button>
+            <button class="button" title="Copy this planner..." on:click={fork}>Copy</button>
+
             <button class="button dropdown" title="Various export methods">
                 Export
                 <div class="formats">
@@ -142,16 +142,21 @@
                     {/each}
                 </div>
             </button>
+            {#if canEdit}
+                <button class="button pull-right" title="Save state planner to the server..." on:click={save}>Save</button>
+            {/if}
+        {:else}
+            <p>
+                Start by adding your first leg.
+            </p>
         {/if}
-        {#if canEdit}
-            <button class="button pull-right" title="Save state planner to the server..." on:click={save}>Save</button>
-        {/if}
+
     </fieldset>
 
-    <div id="other">
-        <a href="#" on:click={e => showModal('prose/about.md')}>About / FAQ</a> |
-        <a href="#" on:click={e => showModal('prose/quickstart.md')}>Quickstart</a> |
-        <a href="#" on:click={e => showModal('prose/howto.md')}>Howto</a>
+    <div class="links">
+        <button on:click={e => showModal('prose/about.md')}>About / FAQ</button> |
+        <button on:click={e => showModal('prose/quickstart.md')}>Quickstart</button> |
+        <button on:click={e => showModal('prose/howto.md')}>Howto</button>
     </div>
     <div id="disclaimer">
         <h5>Disclaimer</h5>
@@ -181,5 +186,15 @@
         margin-top: 2px;
         margin-left: -4px;
         z-index: 1;
+    }
+
+    .links button {
+        display: inline;
+        border: 0;
+        background-color: transparent;
+        color: #069;
+        padding: 0;
+        cursor: pointer;
+        text-decoration: underline;
     }
 </style>

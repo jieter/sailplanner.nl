@@ -24,7 +24,7 @@
         map = L.map(container, {
             svgSprite: false,
             zoomControl: false,
-			center: settings.map.center,
+            center: settings.map.center,
             zoom: settings.map.zoom,
             editable: true
         });
@@ -36,7 +36,7 @@
                 s.settings = settings;
                 return s;
             });
-        })
+        });
         L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
             maxZoom: 19,
             attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, Tiles style by <a href="https://www.hotosm.org/" target="_blank">Humanitarian OpenStreetMap Team</a> hosted by <a href="https://openstreetmap.fr/" target="_blank">OpenStreetMap France</a>'
@@ -67,7 +67,7 @@
 
             if (!map.hasLayer(layers[i])) {
                 if (leg.path) {
-                    layers[i] = L.Polyline.fromEncoded(leg.path)
+                    layers[i] = L.Polyline.fromEncoded(leg.path);
                 } else if (leg.edit == 'edit') {
                     layers[i] = map.editTools.startPolyline(undefined, style);
                 }

@@ -1,12 +1,12 @@
-import { writable } from "svelte/store";
+import { writable } from 'svelte/store';
 import { transformFromLegacy } from './legacy.js';
 
 const EMPTY = {
     key: undefined,
-    authToken: undefined,
+    authToken: null,
     url: undefined,
     editUrl: undefined,
-    comment: "",
+    comment: '',
     settings: {
         average: 5,
         map: { center: [55.167423, 5.365761], zoom: 6 },
@@ -20,7 +20,7 @@ const EMPTY_LEG = {
     width: 2,
     departure: '10:00',
     edit: 'edit'
-}
+};
 
 export const { subscribe, set, update } = writable(EMPTY);
 
@@ -42,15 +42,15 @@ export const updateSettings = (settings) => {
     update(s => {
         s.settings = settings;
         return s;
-    })
-}
+    });
+};
 
 export const updateLegs = (legs) => {
     update(s => {
         s.legs = legs;
         return s;
-    })
-}
+    });
+};
 
 export const fork = () => {
     update(s => {
@@ -60,9 +60,9 @@ export const fork = () => {
         s.editUrl = undefined;
         return s;
     });
-}
+};
 
-const API_URL = 'store.php'
+const API_URL = 'store.php';
 
 export const load = async(key, authToken) => {
     let headers = {
@@ -74,7 +74,7 @@ export const load = async(key, authToken) => {
             if (response.status == 404) {
                 return fetch(`http://sailplanner.nl/getLegs/key:${key}`)
                     .then(response => response.json())
-                    .then(data => transformFromLegacy(data))
+                    .then(data => transformFromLegacy(data));
             } else {
                 return response.json();
             }
@@ -90,7 +90,7 @@ export const save = async() => {
     };
 
     if (state.authToken) {
-        url = `${API_URL}?key=${state.key}`
+        url = `${API_URL}?key=${state.key}`;
         headers['Authorization'] = `basic ${state.authToken}`;
     } else {
         url = API_URL;
@@ -122,4 +122,4 @@ export default {
     fork,
     save,
     load,
-}
+};

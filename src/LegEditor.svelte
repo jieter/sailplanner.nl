@@ -28,7 +28,7 @@
         const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
         return luma < 90 ? 'white' : 'black';
     }
-    const setColor = (color) => () => { leg.color = color };
+    const setColor = (color) => () => { leg.color = color; };
 </script>
 
 <fieldset class="settings">

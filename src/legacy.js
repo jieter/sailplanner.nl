@@ -20,7 +20,7 @@ function transformFromLegacy(old) {
                 comment: leg.options.comment,
                 color: leg.options.color.toLowerCase(),
                 width: leg.options.width || 2
-            }
+            };
         })
     };
     return data;

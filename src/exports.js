@@ -29,7 +29,7 @@ export const asGeoJSON = function(state) {
                     width: leg.width,
                     speed: leg.speed
                 }
-            }
+            };
         })
     });
 };
@@ -54,7 +54,7 @@ export const asKML = function(state) {
             '<tessellate>0</tessellate>' +
             `<coordinates>${points.join(' ')}</coordinates>` +
             '</LineString>' +
-            '</Placemark>'
+            '</Placemark>';
     });
 
     return '<?xml version="1.0" encoding="UTF-8"?>' +
@@ -70,11 +70,10 @@ export const asKML = function(state) {
 
 };
 
-
 // https://www.topografix.com/gpx_manual.asp#:~:text=GPX%20(the%20GPS%20eXchange%20Format,web%20services%20on%20the%20Internet.&text=The%20descriptions%20in%20this%20document,the%20definitive%20definition%20of%20GPX.
 export const asGPX = function(state) {
     let legs = state.legs.map((leg, i) => {
-        const path = decode(leg.path).map(c => `<rtep lat="${c[0]}" lon="${c[1]}"></rtept>`)
+        const path = decode(leg.path).map(c => `<rtep lat="${c[0]}" lon="${c[1]}"></rtept>`);
 
         return `<rte>\n<name><![CDATA[${leg.comment}']]></name>\n` +
             path.join('\n') +

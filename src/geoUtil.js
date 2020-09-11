@@ -32,21 +32,7 @@
             },
 
             getDistance: function(type) {
-                var meters = this._distanceMeters();
-
-                switch (type || 'nautical') {
-                    case 'nautical':
-                        return meters / 1852;
-
-                    case 'imperial':
-                        return meters / 1609;
-
-                    case 'kilometer':
-                        return meters / 1000;
-
-                    default:
-                        return meters;
-                }
+                return this._distanceMeters() / 1852;
             }
         });
         L.extend(L.LatLng.prototype, {
