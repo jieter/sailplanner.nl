@@ -35,10 +35,12 @@
         return +hours + (+minutes / 60);
     }
 
-    function edit(e) {
-        if (canEdit) {
-            dispatch('edit', {leg: i, value: leg.edit === 'edit' ? 'save' : 'edit'});
-        }
+    function edit(leg, i) {
+        return e => {
+            if (canEdit) {
+                dispatch('edit', {leg: i, value: leg.edit === 'edit' ? 'save' : 'edit'});
+            }
+        };
     }
 </script>
 
@@ -54,7 +56,7 @@
     {#each legs as leg, i}
         <tr on:mouseenter={e => dispatch('highlight', {leg: i, value: true})}
             on:mouseleave={e => dispatch('highlight', {leg: i, value: false})}
-            on:click={edit}
+            on:click={edit(leg, i)}
         >
             <td class="start">{leg.departure}</td>
             <td class="comment">{leg.comment}</td>

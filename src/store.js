@@ -4,8 +4,6 @@ import { transformFromLegacy } from './legacy.js';
 const EMPTY = {
     key: undefined,
     authToken: null,
-    url: undefined,
-    editUrl: undefined,
     comment: '',
     settings: {
         average: 5,
@@ -56,8 +54,6 @@ export const fork = () => {
     update(s => {
         s.authToken = null;
         s.key = undefined;
-        s.url = undefined;
-        s.editUrl = undefined;
         return s;
     });
 };

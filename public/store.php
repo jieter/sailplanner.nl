@@ -49,9 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // Create a new planner
         $key = $data['key'] = substr(md5(microtime()), 0, 12);
         $authToken = $data['authToken'] = substr(md5(microtime()), 0, 12);
-
-        $url = $data['url'] = "http://sailplanner.nl/beta/#$key";
-        $data['editUrl'] = "$url|$authToken";
         $data['created'] = $now;
 
         $filename = get_filename($data['key']);
@@ -70,7 +67,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // do not leak them anyway.
     if ($data['authToken'] != $authToken) {
         unset($data['authToken']);
-        unset($data['editUrl']);
     }
 }
 

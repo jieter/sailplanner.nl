@@ -19,6 +19,7 @@
     let settings;
     let canEdit;
 
+    let url;
     let modal;
 
     store.subscribe(s => {
@@ -95,9 +96,17 @@
             return s;
         });
     }
+
+    $: {
+        url = window.location.origin + window.location.pathname + '#' + state.key;
+    }
 </script>
 <div id="sidebar">
-    <h1 id="header">Sailplanner</h1>
+    <h1 id="header">Sailplanner
+        {#if state.created}
+            <small title="Created: {state.created.substring(0, 16)} Last modified: {state.modified.substring(0, 16)}">{state.created.substring(0, 10)}</small>
+        {/if}
+    </h1>
     <Comment comment={comment} canEdit={canEdit} />
     <LegsTable on:new={e => store.createLeg()}
                on:edit={setAction}
@@ -107,8 +116,8 @@
 
     <fieldset class="settings">
         <legend>Settings</legend>
-        <label>Average <abbr title="Speed Over Ground">SOG</abbr>:</label>
-        <input type="number" bind:value="{settings.average}" on:change="{e => store.updateSettings(settings)}" min="0" max="40" />&nbsp;kts<br />
+        <label for="average">Average <abbr title="Speed Over Ground">SOG</abbr>:</label>
+        <input name="average" type="number" bind:value="{settings.average}" on:change="{e => store.updateSettings(settings)}" min="0" max="40" />&nbsp;kts<br />
     </fieldset>
 
     <fieldset class="settings">
@@ -125,9 +134,9 @@
             </Url>
         {/if}
         {#if state.key}
-            <Url label="Read only URL:" url={state.url} />
-            {#if state.editUrl}
-                <Url label="Editable URL:" url={state.editUrl} />
+            <Url label="Read only URL:" url={url} />
+            {#if state.authToken}
+                <Url label="Editable URL:" url={`${url}|${state.authToken}`} />
             {/if}
         {/if}
         {#if legs.length > 0}
@@ -196,5 +205,9 @@
         padding: 0;
         cursor: pointer;
         text-decoration: underline;
+    }
+    h1 small {
+        color: #bbb;
+        float: right;
     }
 </style>

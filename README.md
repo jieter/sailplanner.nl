@@ -49,10 +49,6 @@ No authorization is required, the body is saved in the store, it is returned inc
     "authKey": "<authKey>",
     // optionally the key the planner was copied from.
     "parent": "<key>",
-    // URL pointing to the current/new implementation, read-only.
-    "url": "http://sailplanner.nl/#<key>",
-    // URL which allows changing the data.
-    "editUrl": "http://sailplanner.nl/#<key>|<authKey>",
     // URL pointing to the legacy/old UI implementation.
     "legacyUrl": "https://sailplanner.nl/view/#<key>",
     "comment": "Comment, markdown allowed.",

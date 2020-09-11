@@ -34,15 +34,15 @@
 <fieldset class="settings">
     <legend>Edit leg</legend>
 
-    <label>Comment:</label>
-    <input type="text" class="wide" bind:value="{leg.comment}">
+    <label for="comment">Comment:</label>
+    <input type="text" class="wide" bind:value="{leg.comment}" name="comment">
     <br>
 
-    <label>Departure:</label>
-    <input type="text" bind:value="{leg.departure}"><br>
+    <label for="departure">Departure:</label>
+    <input type="text" bind:value="{leg.departure}" name="departure"><br>
 
-    <label>Color</label>
-    <div style="width: 102px; float: left;">
+    <label for="color">Color</label>
+    <div style="width: 102px; float: left;" name="color">
         {#each colors as color}
             <div style="background-color: {color}; color: {checkColor(color)} " class:checked="{leg.color == color}" class="color" on:click={setColor(color)}>
                 {#if leg.color == color}
