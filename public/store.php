@@ -30,6 +30,7 @@ if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
+    $now = date(DateTime::ISO8601);
 
     if ($key) {
         // Update an existing planner
@@ -51,9 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 
         $url = $data['url'] = "http://sailplanner.nl/beta/#$key";
         $data['editUrl'] = "$url|$authToken";
+        $data['created'] = $now;
 
         $filename = get_filename($data['key']);
     }
+    $data['modified'] = $now;
 
     file_put_contents($filename, json_encode($data, ENCODE_OPTIONS));
 } else {
