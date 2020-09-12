@@ -1,21 +1,21 @@
 import { strict as assert } from 'assert';
 import fetch from 'node-fetch';
 
-const API_URL = 'http://localhost:8000/store.php';
+const BASE_URL = process.env.BASE_URL || 'http://localhost:8000/';
+const API_URL = `${BASE_URL}store.php`;
 const EXISTING_KEY = 'zomer2011';
 const AUTH_TOKEN = '6ef207a08f04';
 const MISSING_KEY = 'gibberish';
 
 const legs = [{
-    "departure": "10:00",
-    "path": "qixlIdohFz@a`EawAmEaeGnmH{ufDlaqAqd@|x@kz@flA",
-    "comment": "Hartlepool - Holy island",
-    "color": "#0000ff",
-    "width": 2,
-    "dog": 59.66,
+    departure: '10:00',
+    path: 'qixlIdohFz@a`EawAmEaeGnmH{ufDlaqAqd@|x@kz@flA',
+    comment: 'Hartlepool - Holy island',
+    color: '#0000ff',
+    width: 2,
 }];
 
-describe('Sailplanner API', function() {
+describe(`Sailplanner API at url: ${API_URL}`, function() {
     describe('GET without a key', () => {
         it('should return a 500-response', async() => {
             let response = await fetch(API_URL);

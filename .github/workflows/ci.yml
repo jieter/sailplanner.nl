@@ -9,9 +9,28 @@ jobs:
       - run: npm install
       - run: npm run eslint
 
-  build:
+  test:
     runs-on: ubuntu-latest
+    services:
+      php:
+        image: jieter/minimal-php
+        options: "-v /${{ github.workspace }}:/home/php/ --name php"
+        ports:
+          - 8000:8000 # dst:src
+
     steps:
       - uses: actions/checkout@v2
       - run: npm install
       - run: npm run build
+      # The container is started before the checkout action runs, so we should restart
+      # to make it work (https://github.community/t/services-and-volumes/16313).
+      - name: restart php container
+        uses: docker://docker
+        with:
+          args: docker restart php
+      - run: curl http://localhost:8000/public/store.php
+      - run: npm test
+        env:
+          BASE_URL: http://localhost:8000/public/
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
