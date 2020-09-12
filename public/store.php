@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if ($key) {
         // Update an existing planner
         if ($data['key'] != $key) {
-            error('Key in payload is not equal to key in URL.', 406);
+            error('Key in payload is not equal to key in URL', 406);
         }
         if (!$authToken) {
             incorrect_credentials();

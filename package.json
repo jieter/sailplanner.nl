@@ -10,6 +10,7 @@
     "scripts": {
         "build": "rollup -c",
         "dev": "rollup -c -w",
+        "php": "php -S 127.0.0.1:8000 -t public/",
         "start": "sirv public",
         "eslint": "eslint src/ test/",
         "test": "mocha -r esm",
