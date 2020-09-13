@@ -20,7 +20,7 @@ Navigate to [localhost:8000](http://localhost:8000).
 
 Response contains the JSON representation of a planner instance, described below.
 
-`authToken=<authToken>` is supplied, the response also contains the `authToken` token.
+If `authToken=<authToken>` is supplied, the response also contains the `authToken` token.
 
 ### Update an existing planner
 
@@ -80,10 +80,10 @@ No authorization is required, the body is saved in the store, it is returned inc
  - [x] Interaction with the backend.
  - [x] Export to GPX / KML.
  - [x] Read only mode.
- - [ ] Update `location.hash` on key changes, watch it for changes too.
+ - [x] Update `location.hash` on key changes, watch it for changes too.
  - [x] Only show quickstart on first load, store state in `localStorage`.
- - [ ] Test KML export
- - [ ] Test GPX expor
+ - [x] Test KML export
+ - [x] Test GPX expor
 
 
 

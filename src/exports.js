@@ -9,11 +9,12 @@ function swap(it) {
 }
 
 // https://tools.ietf.org/html/rfc7946
-export const asGeoJSON = function(state) {
+export const asGeoJSON = function(state, url) {
     return JSON.stringify({
         type: 'FeatureCollection',
         properties: {
             comment: state.comment,
+            url: url
         },
         features: state.legs.map(leg => {
             return {
@@ -23,11 +24,11 @@ export const asGeoJSON = function(state) {
                     coordinates: swap(decode(leg.path))
                 },
                 properties: {
+                    comment: leg.comment,
                     departure: leg.departure,
                     dog: leg.dog,
                     color: leg.color,
-                    width: leg.width,
-                    speed: leg.speed
+                    width: leg.width
                 }
             };
         })
@@ -35,34 +36,34 @@ export const asGeoJSON = function(state) {
 };
 
 // https://www.ogc.org/standards/kml/
-export const asKML = function(state) {
+export const asKML = function(state, url) {
     const styles = state.legs.map((leg, i) => {
-        `<Style id="leg_${i}"><LineStyle>` +
-        `<color>7f${leg.color.substring(1)}</color>` +
-        `<width>${leg.width}</width>` +
-        '</LineStyle>' +
-        '</Style>';
+        return `<Style id="leg_${i}"><LineStyle>` +
+            `<color>7f${leg.color.substring(1)}</color>` +
+            `<width>${leg.width}</width>` +
+            '</LineStyle>' +
+            '</Style>';
     });
 
     const legs = state.legs.map((leg, i) => {
         const points = decode(leg.path).map(coord => `${coord[1]},${coord[0]}`);
 
-        return `<Placemark id="${state.key}_${i}">` +
-            `<name><[CDATA[${leg.comment}]]></name>` +
-            `<styleUrl>#leg_${i}</styleUrl>` +
-            '<LineString>' +
-            '<tessellate>0</tessellate>' +
-            `<coordinates>${points.join(' ')}</coordinates>` +
-            '</LineString>' +
+        return `<Placemark id="${state.key}_${i}">\n` +
+            `  <name><![CDATA[${leg.comment}]]></name>\n` +
+            `  <styleUrl>#leg_${i}</styleUrl>\n` +
+            '  <LineString>\n' +
+            '    <tessellate>0</tessellate>\n' +
+            `    <coordinates>${points.join(' ')}</coordinates>\n` +
+            '  </LineString>' +
             '</Placemark>';
     });
 
-    return '<?xml version="1.0" encoding="UTF-8"?>' +
-        '<kml xmlns="http://earth.google.com/kml/2.0" xmlns:atom="http://www.w3.org/2005/Atom">' +
-        '<Document>' +
-        '<name>Sailplanner</name>' +
-        `<atom:link href="${state.url}" />` +
-        `<description><![CDATA[${state.comment}]]></description>` +
+    return '<?xml version="1.0" encoding="UTF-8"?>\n' +
+        '<kml xmlns="http://earth.google.com/kml/2.0" xmlns:atom="http://www.w3.org/2005/Atom">\n' +
+        '<Document>\n' +
+        '<name>Sailplanner.nl</name>\n' +
+        `<atom:link href="${url}" />\n` +
+        `<description><![CDATA[${state.comment}]]></description>\n` +
         styles.join('\n') +
         legs.join('\n') +
         '</Document>' +
@@ -70,22 +71,23 @@ export const asKML = function(state) {
 
 };
 
-// https://www.topografix.com/gpx_manual.asp#:~:text=GPX%20(the%20GPS%20eXchange%20Format,web%20services%20on%20the%20Internet.&text=The%20descriptions%20in%20this%20document,the%20definitive%20definition%20of%20GPX.
-export const asGPX = function(state) {
+// https://www.topografix.com/gpx_manual.asp
+export const asGPX = function(state, url) {
     let legs = state.legs.map((leg, i) => {
-        const path = decode(leg.path).map(c => `<rtep lat="${c[0]}" lon="${c[1]}"></rtept>`);
+        const path = decode(leg.path).map(c => `<rtept lat="${c[0]}" lon="${c[1]}"></rtept>`);
+        const SEP = '\n  ';
 
-        return `<rte>\n<name><![CDATA[${leg.comment}']]></name>\n` +
-            path.join('\n') +
-            '</rte>';
+        return `<rte>${SEP}<name><![CDATA[${leg.comment}]]></name>${SEP}` +
+            path.join(SEP) +
+            '\n</rte>';
     });
 
-    return '<?xml version="1.0" encoding="UTF-8" standalone="no" ?>' +
-        '<gpx version="1.1" creator="Sailplanner - http://sailplanner.nl" xmlns="http://www.topografix.com/GPX/1/1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">' +
-        '<metadata>' +
-        `<desc><![CDATA[${state.comment}]]></desc>` +
-        `<link href="${state.url}"><text>Sailplanner</text></link>` +
-        '</metadata>' +
-        legs.join('\n') +
+    return '<?xml version="1.0" encoding="UTF-8" standalone="no" ?>\n' +
+        '<gpx version="1.1" creator="Sailplanner - http://sailplanner.nl" xmlns="https://www.topografix.com/gpx/1/1/gpx.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">\n' +
+        '<metadata>\n' +
+        `  <desc><![CDATA[${state.comment}]]></desc>\n` +
+        `  <link href="${url}"><text>Sailplanner</text></link>\n` +
+        '</metadata>\n\n' +
+        legs.join('\n\n') +
         '</gpx>';
 };

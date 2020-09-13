@@ -80,7 +80,7 @@
         'KML': asKML
     };
     function exportPlanner(format) {
-        const contents = exportFormats[format](state);
+        const contents = exportFormats[format](state, url);
 
         let tag = document.createElement('a');
         tag.href = `data:text/json;charset=utf-8,${encodeURIComponent(contents)}`;
