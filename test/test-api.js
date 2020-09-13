@@ -43,20 +43,14 @@ describe(`Sailplanner API at url: ${API_URL}`, function() {
             assert.equal(data.authToken, undefined);
         });
         it('should include the authToken if requested with it', async() => {
-            let response = await fetch(`${API_URL}?key=${EXISTING_KEY}`, {
-                headers: {
-                    'Authorization': `basic ${AUTH_TOKEN}`
-                }
-            });
+            let response = await fetch(`${API_URL}?key=${EXISTING_KEY}&authToken=${AUTH_TOKEN}`);
             assert.equal(response.status, 200);
 
             let data = await response.json();
             assert.equal(data.authToken, AUTH_TOKEN);
         });
         it('should remove the authToken if requested with an incorrect one', async() => {
-            let response = await fetch(`${API_URL}?key=${EXISTING_KEY}`, {
-                headers: { 'Authorization': 'basic gibberish' }
-            });
+            let response = await fetch(`${API_URL}?key=${EXISTING_KEY}&authToken=gibberish`);
             assert.equal(response.status, 200);
 
             let data = await response.json();
@@ -93,9 +87,8 @@ describe(`Sailplanner API at url: ${API_URL}`, function() {
             legs: legs,
         };
         it('should update an existing planner if the correct authToken is used', async() => {
-            let response = await fetch(`${API_URL}?key=${EXISTING_KEY}`, {
+            let response = await fetch(`${API_URL}?key=${EXISTING_KEY}&authToken=${AUTH_TOKEN}`, {
                 method: 'POST',
-                headers: { 'Authorization': `basic ${AUTH_TOKEN}` },
                 body: JSON.stringify(state)
             });
             assert.equal(response.status, 200);
@@ -111,9 +104,8 @@ describe(`Sailplanner API at url: ${API_URL}`, function() {
             let illegalState = JSON.parse(JSON.stringify(state));
             illegalState['key'] = 'foo';
 
-            let response = await fetch(`${API_URL}?key=${EXISTING_KEY}`, {
+            let response = await fetch(`${API_URL}?key=${EXISTING_KEY}&authToken=${AUTH_TOKEN}`, {
                 method: 'POST',
-                headers: { 'Authorization': `basic ${AUTH_TOKEN}` },
                 body: JSON.stringify(illegalState)
             });
             assert.equal(response.status, 406);
@@ -123,9 +115,8 @@ describe(`Sailplanner API at url: ${API_URL}`, function() {
 
         });
         it('should not update an existing planner if an incorrect authToken is used', async() => {
-            let response = await fetch(`${API_URL}?key=${EXISTING_KEY}`, {
+            let response = await fetch(`${API_URL}?key=${EXISTING_KEY}&authToken=gibberish`, {
                 method: 'POST',
-                headers: { 'Authorization': 'basic gibberish' },
                 body: JSON.stringify(state)
             });
             assert.equal(response.status, 401);

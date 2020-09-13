@@ -24,9 +24,7 @@ if ($key) {
         not_found();
     }
 }
-if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-    $authToken = explode(' ', $_SERVER['HTTP_AUTHORIZATION'])[1];
-}
+$authToken = $_GET['authToken'];
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);

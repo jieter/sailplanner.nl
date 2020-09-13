@@ -61,39 +61,32 @@ export const fork = () => {
 const API_URL = 'store.php';
 
 export const load = async(key, authToken) => {
-    let headers = {
-        'Authorization': `basic ${authToken}`
-    };
+    let url = `${API_URL}?key=${key}&authToken=${authToken}`;
 
-    let data = await fetch(`${API_URL}?key=${key}`, { headers: headers })
-        .then(response => {
-            if (response.status == 404) {
-                return fetch(`http://sailplanner.nl/getLegs/key:${key}`)
-                    .then(response => response.json())
-                    .then(data => transformFromLegacy(data));
-            } else {
-                return response.json();
-            }
-        });
+    let data = await fetch(url).then(response => {
+        if (response.status == 404) {
+            return fetch(`http://sailplanner.nl/getLegs/key:${key}`)
+                .then(response => response.json())
+                .then(data => transformFromLegacy(data));
+        } else {
+            return response.json();
+        }
+    });
 
     set(data);
 };
 
 export const save = async() => {
     let url;
-    let headers = {
-        'Content-Type': 'application/json'
-    };
 
     if (state.authToken) {
-        url = `${API_URL}?key=${state.key}`;
-        headers['Authorization'] = `basic ${state.authToken}`;
+        url = `${API_URL}?key=${state.key}&authToken=${state.authToken}`;
     } else {
         url = API_URL;
     }
     let response = await fetch(url, {
         method: 'POST',
-        headers: headers,
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(state)
     });
     if (response.status == 200) {
