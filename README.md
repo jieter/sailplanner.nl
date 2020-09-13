@@ -3,9 +3,10 @@
 ```bash
 npm install
 npm run dev
+npm run php
 ```
 
-Navigate to [localhost:5000](http://localhost:5000).
+Navigate to [localhost:8000](http://localhost:8000).
 
 [Svelte API docs](https://svelte.dev/docs#script)
 [Svelte tutorial](https://svelte.dev/tutorial/basics)
