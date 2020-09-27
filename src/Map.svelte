@@ -2,10 +2,9 @@
     import * as L from 'leaflet';
     import 'leaflet-editable';
     import 'leaflet/dist/leaflet.css';
-    import 'polyline-encoded';
     import './geoUtil.js';
 
-    import { beforeUpdate, onMount } from 'svelte';
+    import { beforeUpdate, onMount, setContext } from 'svelte';
     import store from './store.js';
     import { roundn } from './formatting.js';
 
@@ -19,6 +18,10 @@
 
     let container;
     let map;
+
+    setContext('leafletInstance', {
+        getMap: () => map
+    });
 
     onMount(() => {
         map = L.map(container, {
@@ -53,52 +56,6 @@
         if (map) {
             map.setView(settings.map.center, settings.map.zoom);
         }
-        if (legs.length == 0) {
-            layers.forEach(function (layer) {
-                layer.removeFrom(map);
-            });
-        }
-        let toDelete = undefined;
-        legs.forEach(function (leg, i) {
-            let style = {
-                color: leg.color,
-                weight: leg.highlight ? (leg.width * 2) : leg.width
-            };
-
-            if (!map.hasLayer(layers[i])) {
-                if (leg.path) {
-                    layers[i] = L.Polyline.fromEncoded(leg.path);
-                } else if (leg.edit == 'edit') {
-                    layers[i] = map.editTools.startPolyline(undefined, style);
-                }
-            } else {
-                if (leg.edit == 'edit' && layers[i].getLatLngs().length == 0) {
-                    layers[i] = map.editTools.startPolyline(undefined, style);
-                }
-            }
-
-            let layer = layers[i];
-            layer.addTo(map);
-
-            if (leg.delete) {
-                layer.removeFrom(map);
-                toDelete = i;
-            } else if (leg.edit === 'edit') {
-                layer.enableEdit(map);
-            } else if (leg.edit === 'save') {
-                legs[i].path = layer.encodePath();
-                delete legs[i].edit;
-                layer.disableEdit();
-            }
-            if (layer._latlngs.length > 1) {
-                layer.setStyle(style);
-            }
-            legs[i].dog = roundn(layer.getDistance(), 2);
-        });
-        if (toDelete !== undefined) {
-            legs.splice(toDelete, 1);
-        }
-        store.updateLegs(legs);
     };
     const resize = () => {
         map.invalidateSize();
@@ -106,4 +63,6 @@
 </script>
 
 <svelte:window on:resize="{resize}" />
-<div bind:this="{container}" id="map"></div>
+<div bind:this="{container}" id="map">
+    <slot></slot>
+</div>

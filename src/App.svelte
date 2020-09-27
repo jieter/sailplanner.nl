@@ -1,6 +1,7 @@
 
 <script>
     import Map from './Map.svelte';
+    import Polyline from './Polyline.svelte';
     import LegsTable from './LegsTable.svelte';
     import Modal from './Modal.svelte';
     import Url from './Url.svelte';
@@ -165,7 +166,8 @@
     <div class="links">
         <button on:click={e => showModal('prose/about.md')}>About / FAQ</button> |
         <button on:click={e => showModal('prose/quickstart.md')}>Quickstart</button> |
-        <button on:click={e => showModal('prose/howto.md')}>Howto</button>
+        <button on:click={e => showModal('prose/howto.md')}>Howto</button> |
+        <a href="https://github.com/jieter/sailplanner.nl" target="_new">GitHub</a>
     </div>
     <div id="disclaimer">
         <h5>Disclaimer</h5>
@@ -177,7 +179,11 @@
     <Modal bind:this={modal} />
 
 </div>
-<Map />
+<Map>
+    {#each legs as leg (leg)}
+        <Polyline leg={leg} />
+    {/each}
+</Map>
 
 <style>
     .dropdown {
