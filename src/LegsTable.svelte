@@ -53,7 +53,7 @@
         <th class="eta" title="Estimated time of arrival">ETA</th>
         <th class="color"></th>
     </tr>
-    {#each legs as leg, i}
+    {#each legs as leg, i (leg)}
         <tr on:mouseenter={e => dispatch('highlight', {leg: i, value: true})}
             on:mouseleave={e => dispatch('highlight', {leg: i, value: false})}
             on:click={edit(leg, i)}

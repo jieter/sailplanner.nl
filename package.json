@@ -10,8 +10,7 @@
     "scripts": {
         "build": "rollup -c",
         "dev": "rollup -c -w",
-        "php": "php -S 127.0.0.1:8000 -t public/",
-        "start": "sirv public",
+        "start": "php -S 127.0.0.1:8000 -t public/",
         "eslint": "eslint src/ test/",
         "test": "mocha -r esm",
         "publish": "npm run build && rsync -a public/ jieter@jieter.nl:/srv/www/sailplanner.nl/htdocs/beta"

@@ -61,7 +61,10 @@ export const fork = () => {
 const API_URL = 'store.php';
 
 export const load = async(key, authToken) => {
-    let url = `${API_URL}?key=${key}&authToken=${authToken}`;
+    let url = `${API_URL}?key=${key}`;
+    if (authToken) {
+        url += `&authToken=${authToken}`;
+    }
 
     let data = await fetch(url).then(response => {
         if (response.status == 404) {
