@@ -103,7 +103,7 @@
     }
 </script>
 <div id="sidebar">
-    <h1 id="header">Sailplanner
+    <h1>Sailplanner
         {#if state.created}
             <small title="Created: {state.created.substring(0, 16)} Last modified: {state.modified.substring(0, 16)}">{state.created.substring(0, 10)}</small>
         {/if}

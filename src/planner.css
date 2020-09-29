@@ -34,15 +34,6 @@ a img {
     float: left;
 }
 
-#map {
-    left: 320px;
-    right: 0px;
-    top: 0px;
-    position: absolute;
-    bottom: 0px;
-    border: 1px solid black;
-}
-
 input {
     border: 1px solid #ccc;
 }

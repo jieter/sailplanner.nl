@@ -62,7 +62,17 @@
     };
 </script>
 
-<svelte:window on:resize="{resize}" />
-<div bind:this="{container}" id="map">
+<div bind:this="{container}" class="map">
     <slot></slot>
 </div>
+
+<style>
+    .map {
+        left: 320px;
+        right: 0px;
+        top: 0px;
+        position: absolute;
+        bottom: 0px;
+        border: 1px solid black;
+    }
+</style>
