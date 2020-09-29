@@ -23,12 +23,12 @@ jobs:
       - run: npm install
       - run: npm run build
       # The container is started before the checkout action runs, so we should restart
-      # to make it work (https://github.community/t/services-and-volumes/16313).
+      # the container to make it have access to the workspace
+      # (https://github.community/t/services-and-volumes/16313).
       - name: restart php container
         uses: docker://docker
         with:
           args: docker restart php
-      - run: curl http://localhost:8000/public/store.php
       - run: npm test
         env:
           BASE_URL: http://localhost:8000/public/
