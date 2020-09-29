@@ -1,3 +1,5 @@
+import { roundn } from './formatting.js';
+
 /* Take a json of legacy sailplanner.nl and turn into the current format.
  */
 function transformFromLegacy(old) {
@@ -17,6 +19,7 @@ function transformFromLegacy(old) {
             return {
                 departure: leg.options.departure,
                 path: leg.path,
+                dog: roundn(L.Polyline.fromEncoded(leg.path).getDistance(), 2),
                 comment: leg.options.comment,
                 color: leg.options.color.toLowerCase(),
                 width: leg.options.width || 2

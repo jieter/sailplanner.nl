@@ -37,13 +37,14 @@
     $: {
         if (layer) {
             setStyle();
+
             if (leg.edit === 'edit') {
                 layer.enableEdit(map);
             } else if (leg.edit === 'save') {
                 leg.path = layer.encodePath();
+                leg.dog = roundn(layer.getDistance(), 2);
                 layer.disableEdit();
             }
-            leg.dog = roundn(layer.getDistance(), 2);
         }
     }
 </script>
