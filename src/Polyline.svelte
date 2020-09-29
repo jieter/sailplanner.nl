@@ -40,7 +40,7 @@
 
             if (leg.edit === 'edit') {
                 layer.enableEdit(map);
-                // One might expect this to work, but it results in an infinate loop.
+                // One might expect this to work, but it results in an infinite loop.
                 // map.fitBounds(layer.getBounds());
             } else if (leg.edit === 'save') {
                 leg.path = layer.encodePath();
