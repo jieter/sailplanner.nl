@@ -40,6 +40,8 @@
 
             if (leg.edit === 'edit') {
                 layer.enableEdit(map);
+                // One might expect this to work, but it results in an infinate loop.
+                // map.fitBounds(layer.getBounds());
             } else if (leg.edit === 'save') {
                 leg.path = layer.encodePath();
                 leg.dog = roundn(layer.getDistance(), 2);

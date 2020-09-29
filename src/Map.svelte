@@ -47,18 +47,13 @@
 
         L.tileLayer('http://tiles.openseamap.org/seamark/{z}/{x}/{y}.png').addTo(map);
 
-        resize();
+        map.invalidateSize();
     });
 
-    // Keep map layers created in this array.
-    let layers = [];
     $: {
         if (map) {
             map.setView(settings.map.center, settings.map.zoom);
         }
-    };
-    const resize = () => {
-        map.invalidateSize();
     };
 </script>
 
