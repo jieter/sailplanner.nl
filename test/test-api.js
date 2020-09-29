@@ -19,42 +19,42 @@ describe(`Sailplanner API at url: ${API_URL}`, function() {
     describe('GET without a key', () => {
         it('should return a 500-response', async() => {
             let response = await fetch(API_URL);
-            assert.equal(response.status, 500);
+            assert.strictEqual(response.status, 500);
 
             let data = await response.json();
-            assert.deepEqual(data, { success: false, message: 'No key provided' });
+            assert.deepStrictEqual(data, { success: false, message: 'No key provided' });
         });
     });
     describe('GET non-existant planner planner', () => {
         it('should return a 404-response', async() => {
             let response = await fetch(`${API_URL}?key=${MISSING_KEY}`);
-            assert.equal(response.status, 404);
+            assert.strictEqual(response.status, 404);
 
             let data = await response.json();
-            assert.deepEqual(data, { success: false, message: 'File not found' });
+            assert.deepStrictEqual(data, { success: false, message: 'File not found' });
         });
     });
     describe('GET existing planner', () => {
         it('should return the data without authToken', async() => {
             let response = await fetch(`${API_URL}?key=${EXISTING_KEY}`);
-            assert.equal(response.status, 200);
+            assert.strictEqual(response.status, 200);
 
             let data = await response.json();
-            assert.equal(data.authToken, undefined);
+            assert.strictEqual(data.authToken, undefined);
         });
         it('should include the authToken if requested with it', async() => {
             let response = await fetch(`${API_URL}?key=${EXISTING_KEY}&authToken=${AUTH_TOKEN}`);
-            assert.equal(response.status, 200);
+            assert.strictEqual(response.status, 200);
 
             let data = await response.json();
-            assert.equal(data.authToken, AUTH_TOKEN);
+            assert.strictEqual(data.authToken, AUTH_TOKEN);
         });
         it('should remove the authToken if requested with an incorrect one', async() => {
             let response = await fetch(`${API_URL}?key=${EXISTING_KEY}&authToken=gibberish`);
-            assert.equal(response.status, 200);
+            assert.strictEqual(response.status, 200);
 
             let data = await response.json();
-            assert.equal(data.authToken, undefined);
+            assert.strictEqual(data.authToken, undefined);
         });
     });
 
@@ -71,10 +71,10 @@ describe(`Sailplanner API at url: ${API_URL}`, function() {
                 body: JSON.stringify(state)
             });
             let data = await response.json();
-            assert.equal(data.created.substring(0, 18), new Date().toISOString().substring(0, 18));
-            assert.equal(data.created, data.modified);
-            assert.equal(data.key.length, 12);
-            assert.equal(data.key.length, 12);
+            assert.strictEqual(data.created.substring(0, 16), new Date().toISOString().substring(0, 16));
+            assert.strictEqual(data.created, data.modified);
+            assert.strictEqual(data.key.length, 12);
+            assert.strictEqual(data.key.length, 12);
         });
     });
     describe('POST existing planner', () => {
@@ -91,14 +91,14 @@ describe(`Sailplanner API at url: ${API_URL}`, function() {
                 method: 'POST',
                 body: JSON.stringify(state)
             });
-            assert.equal(response.status, 200);
+            assert.strictEqual(response.status, 200);
 
             let data = await response.json();
-            assert.equal(data.key, EXISTING_KEY);
-            assert.equal(data.authToken, AUTH_TOKEN);
-            assert.equal(data.created, state.created);
-            assert.equal(data.modified.substring(0, 18), new Date().toISOString().substring(0, 18));
-            assert.equal(data.legs.length, state.legs.length);
+            assert.strictEqual(data.key, EXISTING_KEY);
+            assert.strictEqual(data.authToken, AUTH_TOKEN);
+            assert.strictEqual(data.created, state.created);
+            assert.strictEqual(data.modified.substring(0, 18), new Date().toISOString().substring(0, 18));
+            assert.strictEqual(data.legs.length, state.legs.length);
         });
         it('should not update an existing planner if key in url and payload do not match', async() => {
             let illegalState = JSON.parse(JSON.stringify(state));
@@ -108,10 +108,10 @@ describe(`Sailplanner API at url: ${API_URL}`, function() {
                 method: 'POST',
                 body: JSON.stringify(illegalState)
             });
-            assert.equal(response.status, 406);
+            assert.strictEqual(response.status, 406);
 
             let data = await response.json();
-            assert.deepEqual(data, { success: false, message: 'Key in payload is not equal to key in URL' });
+            assert.deepStrictEqual(data, { success: false, message: 'Key in payload is not equal to key in URL' });
 
         });
         it('should not update an existing planner if an incorrect authToken is used', async() => {
@@ -119,10 +119,10 @@ describe(`Sailplanner API at url: ${API_URL}`, function() {
                 method: 'POST',
                 body: JSON.stringify(state)
             });
-            assert.equal(response.status, 401);
+            assert.strictEqual(response.status, 401);
 
             let data = await response.json();
-            assert.deepEqual(data, { success: false, message: 'Incorrect credentials' });
+            assert.deepStrictEqual(data, { success: false, message: 'Incorrect credentials' });
         });
     });
 
