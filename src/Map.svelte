@@ -5,17 +5,9 @@
     import './geoUtil.js';
 
     import { beforeUpdate, onMount, setContext } from 'svelte';
-    import store from './store.js';
     import { roundn } from './formatting.js';
 
-    let settings;
-    let legs;
-
-    store.subscribe(state => {
-        settings = state.settings;
-        legs = state.legs;
-    });
-
+    export let settings;
     let container;
     let map;
 
@@ -25,20 +17,13 @@
 
     onMount(() => {
         map = L.map(container, {
-            svgSprite: false,
-            zoomControl: false,
             center: settings.map.center,
             zoom: settings.map.zoom,
-            editable: true
         });
         map.on('zoomend moveend', e => {
-            settings.map.zoom = map.getZoom();
             let center = map.getCenter();
             settings.map.center = [center.lat, center.lng];
-            store.update(s => {
-                s.settings = settings;
-                return s;
-            });
+            settings.map.zoom = map.getZoom();
         });
         L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
             maxZoom: 19,

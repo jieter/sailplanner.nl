@@ -179,7 +179,7 @@
     <Modal bind:this={modal} />
 
 </div>
-<Map>
+<Map settings={settings}>
     {#each legs as leg (leg)}
         <Polyline leg={leg} />
     {/each}
