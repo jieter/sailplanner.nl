@@ -13,7 +13,7 @@
         "start": "php -S 127.0.0.1:8000 -t public/",
         "eslint": "eslint src/ test/",
         "test": "mocha -r esm",
-        "publish": "npm run build && rsync -a public/ jieter@jieter.nl:/srv/www/sailplanner.nl/htdocs/beta"
+        "publish": "npm run build && rsync  -e \"ssh -o StrictHostKeyChecking=no\" -a public/ jieter@jieter.nl:/srv/www/sailplanner.nl/htdocs/beta"
     },
     "devDependencies": {
         "@rollup/plugin-commonjs": "^12.0.0",

@@ -1,0 +1,16 @@
+name: deploy
+on: workflow_dispatch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy '${{ github.event.client_payload.branch }}' to sailplanner.nl
+    steps:
+      - uses: actions/checkout@v2
+      - uses: webfactory/ssh-agent@v0.4.1
+        with:
+          ssh-private-key: ${{ secrets.SAILPLANNER_DEPLOY_KEY }}
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v3
+      - run: npm install
+      - run: npm run publish
