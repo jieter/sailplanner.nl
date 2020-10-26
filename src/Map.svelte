@@ -19,6 +19,7 @@
         map = L.map(container, {
             center: settings.map.center,
             zoom: settings.map.zoom,
+            editable: true,
         });
         map.on('zoomend moveend', e => {
             let center = map.getCenter();
