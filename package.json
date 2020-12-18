@@ -33,7 +33,7 @@
         "svelte": "^3.24.1"
     },
     "dependencies": {
-        "dompurify": "^2.0.15",
+        "dompurify": "^2.0.17",
         "leaflet": "^1.7.1",
         "leaflet-editable": "^1.2.0",
         "marked": "^1.1.1",
