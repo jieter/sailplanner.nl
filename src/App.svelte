@@ -1,12 +1,11 @@
 
 <script>
-    import Map from './Map.svelte';
-    import Polyline from './Polyline.svelte';
-    import LegsTable from './LegsTable.svelte';
-    import Modal from './Modal.svelte';
-    import Url from './Url.svelte';
-    import Comment from './Comment.svelte';
-
+    import Map from './components/Map.svelte';
+    import Polyline from './components/Polyline.svelte';
+    import LegsTable from './components/LegsTable.svelte';
+    import Modal from './components/Modal.svelte';
+    import Url from './components/Url.svelte';
+    import Comment from './components/Comment.svelte';
 
     import { asGeoJSON, asGPX, asKML } from './exports.js';
     import { onMount } from 'svelte';

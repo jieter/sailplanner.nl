@@ -1,7 +1,7 @@
 <script>
     import { onMount, getContext } from 'svelte';
     import 'polyline-encoded';
-    import { roundn } from './formatting.js';
+    import { roundn } from '../formatting.js';
 
     const { getMap } = getContext('leafletInstance');
     const map = getMap();

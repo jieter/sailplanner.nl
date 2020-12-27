@@ -1,8 +1,9 @@
 <script>
     import { beforeUpdate, createEventDispatcher } from 'svelte';
-    import { formatDuration, smartRound } from './formatting.js';
-    import { subscribe, update } from './store.js';
+
     import LegEditor from './LegEditor.svelte';
+    import { subscribe, update } from '../store.js';
+    import { formatDuration, smartRound } from '../formatting.js';
 
     const dispatch = createEventDispatcher();
     export let canEdit = false;

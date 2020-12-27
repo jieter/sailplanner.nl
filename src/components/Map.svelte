@@ -2,10 +2,10 @@
     import * as L from 'leaflet';
     import 'leaflet-editable';
     import 'leaflet/dist/leaflet.css';
-    import './geoUtil.js';
-
     import { beforeUpdate, onMount, setContext } from 'svelte';
-    import { roundn } from './formatting.js';
+
+    import '../geoUtil.js';
+    import { roundn } from '../formatting.js';
 
     export let settings;
     let container;
