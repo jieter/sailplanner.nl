@@ -124,7 +124,6 @@ fieldset.settings select#overlay {
     padding: 2px 8px;
 }
 
-
 /*
  * Color picker
  */
@@ -156,7 +155,6 @@ fieldset.settings select#overlay {
     cursor: default;
     background-position: -26px 0;
 }
-
 
 /* notify with jquery.showMessage.js */
 

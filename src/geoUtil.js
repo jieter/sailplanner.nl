@@ -1,4 +1,4 @@
-(function() {
+(function () {
     'use strict';
 
     function bearing(a, b) {
@@ -8,15 +8,14 @@
         var lat2 = b.lat * d2r;
 
         var y = Math.sin(dLon) * Math.cos(lat2);
-        var x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) *
-            Math.cos(lat2) * Math.cos(dLon);
+        var x = Math.cos(lat1) * Math.sin(lat2) - Math.sin(lat1) * Math.cos(lat2) * Math.cos(dLon);
 
-        return ((Math.atan2(y, x) * 180 / Math.PI) + 360) % 360;
+        return ((Math.atan2(y, x) * 180) / Math.PI + 360) % 360;
     }
 
     if (L) {
         L.Polyline.include({
-            _distanceMeters: function() {
+            _distanceMeters: function () {
                 var latlngs = this.getLatLngs();
 
                 if (latlngs.length < 2) {
@@ -31,15 +30,14 @@
                 return distance;
             },
 
-            getDistance: function(type) {
+            getDistance: function (type) {
                 return this._distanceMeters() / 1852;
-            }
+            },
         });
         L.extend(L.LatLng.prototype, {
-            bearingTo: function(other) {
+            bearingTo: function (other) {
                 return bearing(this, L.latLng(other));
-            }
+            },
         });
-
     }
 })();

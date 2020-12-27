@@ -12,6 +12,7 @@
         "dev": "rollup -c -w",
         "start": "php -S 127.0.0.1:8000 -t public/",
         "eslint": "eslint src/ test/",
+        "format": "prettier --write --plugin-search-dir=. src/",
         "test": "mocha -r esm",
         "publish": "npm run build && rsync  -e \"ssh -o StrictHostKeyChecking=no\" -a public/ jieter@jieter.nl:/srv/www/sailplanner.nl/htdocs/beta"
     },
@@ -23,6 +24,8 @@
         "esm": "^3.2.25",
         "mocha": "^8.1.3",
         "node-fetch": "^2.6.1",
+        "prettier": "^2.2.1",
+        "prettier-plugin-svelte": "^1.4.2",
         "rollup": "^2.26.11",
         "rollup-plugin-analyzer": "^3.3.0",
         "rollup-plugin-css-only": "^2.1.0",
@@ -51,12 +54,14 @@
         "plugins": [
             "svelte3"
         ],
-        "overrides": [{
-            "files": [
-                "*.svelte"
-            ],
-            "processor": "svelte3/svelte3"
-        }],
+        "overrides": [
+            {
+                "files": [
+                    "*.svelte"
+                ],
+                "processor": "svelte3/svelte3"
+            }
+        ],
         "rules": {
             "semi": [
                 "error",
