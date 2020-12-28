@@ -6,8 +6,8 @@ import { beforeUpdate, onMount, setContext } from 'svelte';
 
 import '../geoUtil.js';
 import { roundn } from '../formatting.js';
+import store from '../store.js';
 
-export let settings;
 let container;
 let map;
 
@@ -17,14 +17,14 @@ setContext('leaflet', {
 
 onMount(() => {
     map = L.map(container, {
-        center: settings.map.center,
-        zoom: settings.map.zoom,
+        center: $store.settings.map.center,
+        zoom: $store.settings.map.zoom,
         editable: true,
     });
     map.on('zoomend moveend', (e) => {
         let center = map.getCenter();
-        settings.map.center = [center.lat, center.lng];
-        settings.map.zoom = map.getZoom();
+        $store.settings.map.center = [center.lat, center.lng];
+        $store.settings.map.zoom = map.getZoom();
     });
     L.tileLayer('https://{s}.tile.openstreetmap.fr/hot/{z}/{x}/{y}.png', {
         maxZoom: 19,
@@ -41,7 +41,7 @@ onMount(() => {
 
 $: {
     if (map) {
-        map.setView(settings.map.center, settings.map.zoom);
+        map.setView($store.settings.map.center, $store.settings.map.zoom);
     }
 }
 </script>

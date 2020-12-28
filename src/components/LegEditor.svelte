@@ -19,7 +19,7 @@ const colors = [
     '#ff00ff',
 ];
 
-function checkColor(hex) {
+function contrastingColor(hex) {
     const rgb = parseInt(hex.substring(1), 16);
     const r = (rgb >> 16) & 0xff;
     const g = (rgb >> 8) & 0xff;
@@ -47,7 +47,7 @@ const setColor = (color) => () => {
     <div style="width: 102px; float: left;" name="color">
         {#each colors as color}
             <div
-                style="background-color: {color}; color: {checkColor(color)} "
+                style="background-color: {color}; color: {contrastingColor(color)} "
                 class:checked={leg.color == color}
                 class="color"
                 on:click={setColor(color)}

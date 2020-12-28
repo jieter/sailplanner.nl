@@ -58,7 +58,7 @@ This is the link for those who are allowed tot edit the planner, of course inclu
 
 ### Some final tips.
 
-<a class="button example" href="/#key-howtoExample">Show example</a>
+<a class="button example" href="/#howtoExample">Show example</a>
 
 - Try to adjust your average speed to see what happens to your <abbr title="Estimated Time of Arrival">ETA</abbr> if you cannot make your overall average on one leg.
 

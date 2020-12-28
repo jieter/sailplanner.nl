@@ -12,22 +12,8 @@ import store from './store.js';
 
 import './planner.css';
 
-let state;
-let comment;
-let legs;
-let settings;
-let canEdit;
-
 let url;
 let modal;
-
-store.subscribe((s) => {
-    state = s;
-    comment = s.comment;
-    settings = s.settings;
-    legs = s.legs;
-    canEdit = s.authToken || s.authToken === null;
-});
 
 async function loadFromHash() {
     let key = window.location.hash.substring(1);
@@ -56,11 +42,6 @@ onMount(() => {
     window.onhashchange = loadFromHash;
 });
 
-function fork() {
-    store.fork();
-    window.location.hash = '';
-}
-
 async function save() {
     let hash = await store.save();
 
@@ -78,8 +59,9 @@ const exportFormats = {
     GPX: asGPX,
     KML: asKML,
 };
+
 function exportPlanner(format) {
-    const contents = exportFormats[format](state, url);
+    const contents = exportFormats[format]($store, url);
 
     let tag = document.createElement('a');
     tag.href = `data:text/json;charset=utf-8,${encodeURIComponent(contents)}`;
@@ -89,55 +71,42 @@ function exportPlanner(format) {
 }
 
 function setAction(event) {
-    store.update((s) => {
-        legs[event.detail.leg][event.type] = event.detail.value;
-        s.legs = legs;
-        return s;
+    store.update((state) => {
+        state.legs[event.detail.leg][event.type] = event.detail.value;
+        state.legs = state.legs;
+        return state;
     });
 }
 
 $: {
-    url = window.location.origin + window.location.pathname + '#' + state.key;
+    url = window.location.origin + window.location.pathname + '#' + $store.key;
 }
 </script>
 
 <div id="sidebar">
     <h1>
         Sailplanner
-        {#if state.created}
+        {#if $store.created}
             <small
-                title="Created: {state.created.substring(0, 16)} Last modified: {state.modified.substring(0, 16)}"
-            >{state.created.substring(0, 10)}</small>
+                title="Created: {$store.created.substring(0, 16)} Last modified: {$store.modified.substring(0, 16)}"
+            >{$store.created.substring(0, 10)}</small>
         {/if}
     </h1>
-    <Comment {comment} {canEdit} />
-    <LegsTable
-        on:new={(e) => store.createLeg()}
-        on:edit={setAction}
-        on:highlight={setAction}
-        on:delete={setAction}
-        {canEdit}
-    />
+    <Comment />
+    <LegsTable on:new={(e) => store.createLeg()} on:edit={setAction} on:highlight={setAction} on:delete={setAction} />
 
     <fieldset class="settings">
         <legend>Settings</legend>
         <label for="average">Average <abbr title="Speed Over Ground">SOG</abbr>:</label>
-        <input
-            name="average"
-            type="number"
-            bind:value={settings.average}
-            on:change={(e) => store.updateSettings(settings)}
-            min="0"
-            max="40"
-        />&nbsp;kts<br />
+        <input name="average" type="number" bind:value={$store.settings.average} min="0" max="40" />&nbsp;kts<br />
     </fieldset>
 
     <fieldset class="settings">
         <legend>Sharing &amp; editing</legend>
 
-        {#if state.legacyUrl}
-            <Url label="Legacy URL:" url={state.legacyUrl}>
-                {#if !canEdit}
+        {#if $store.legacyUrl}
+            <Url label="Legacy URL:" url={$store.legacyUrl}>
+                {#if !$store.canEdit}
                     <p>
                         This is a legacy planner. Use the 'Copy' button below to transfer it to the current version. It
                         will receive a new url.
@@ -145,15 +114,15 @@ $: {
                 {/if}
             </Url>
         {/if}
-        {#if state.key}
+        {#if $store.key}
             <Url label="Read only URL:" {url} />
-            {#if state.authToken}
-                <Url label="Editable URL:" url={`${url}|${state.authToken}`} />
+            {#if $store.authToken}
+                <Url label="Editable URL:" url={`${url}|${$store.authToken}`} />
             {/if}
         {/if}
-        {#if legs.length > 0}
+        {#if $store.legs.length > 0}
             <button class="button" title="Start over..." on:click={store.reset}>New</button>
-            <button class="button" title="Copy this planner..." on:click={fork}>Copy</button>
+            <button class="button" title="Copy this planner..." on:click={store.fork}>Copy</button>
 
             <button class="button dropdown" title="Various export methods">
                 Export
@@ -163,12 +132,11 @@ $: {
                     {/each}
                 </div>
             </button>
-            {#if canEdit}
-                <button
-                    class="button pull-right"
-                    title="Save state planner to the server..."
-                    on:click={save}
-                >Save</button>
+            {#if $store.canEdit}
+                <button class="button pull-right" title="Save state planner to the server..." on:click={save}>
+                    {#if !$store.isDirty}<span color="green">✓</span>{/if}
+                    Save
+                </button>
             {/if}
         {:else}
             <p>Start by adding your first leg.</p>
@@ -193,8 +161,8 @@ $: {
 
     <Modal bind:this={modal} />
 </div>
-<Map {settings}>
-    {#each legs as leg (leg)}
+<Map>
+    {#each $store.legs as leg (leg)}
         <Polyline {leg} />
     {/each}
 </Map>

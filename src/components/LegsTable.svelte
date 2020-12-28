@@ -2,29 +2,22 @@
 import { beforeUpdate, createEventDispatcher } from 'svelte';
 
 import LegEditor from './LegEditor.svelte';
-import { subscribe, update } from '../store.js';
+import store from '../store.js';
 import { formatDuration, smartRound } from '../formatting.js';
 
 const dispatch = createEventDispatcher();
-export let canEdit = false;
 
-let settings;
 let legs;
 let totals;
 
-subscribe((state) => {
-    settings = state.settings;
-    legs = state.legs;
-});
-
 beforeUpdate(() => {
-    let dog = legs.map((leg) => leg.dog).reduce((a, b) => a + b, 0);
+    let dog = $store.legs.map((leg) => leg.dog).reduce((a, b) => a + b, 0);
     if (isNaN(dog) || dog == 0) {
         totals = { dog: 0, ttg: 0 };
     } else {
         totals = {
             dog: smartRound(dog),
-            ttg: formatDuration(dog / settings.average),
+            ttg: formatDuration(dog / $store.settings.average),
         };
     }
 });
@@ -38,7 +31,7 @@ function departure(time) {
 
 function edit(leg, i) {
     return (e) => {
-        if (canEdit) {
+        if ($store.canEdit) {
             dispatch('edit', { leg: i, value: leg.edit === 'edit' ? 'save' : 'edit' });
         }
     };
@@ -54,7 +47,7 @@ function edit(leg, i) {
         <th class="eta" title="Estimated time of arrival">ETA</th>
         <th class="color" />
     </tr>
-    {#each legs as leg, i (leg)}
+    {#each $store.legs as leg, i (leg)}
         <tr
             on:mouseenter={(e) => dispatch('highlight', { leg: i, value: true })}
             on:mouseleave={(e) => dispatch('highlight', { leg: i, value: false })}
@@ -64,14 +57,14 @@ function edit(leg, i) {
             <td class="comment">{leg.comment}</td>
             {#if leg.dog > 0}
                 <td class="dog">{smartRound(leg.dog)}</td>
-                <td class="ttg">{formatDuration(leg.dog / settings.average)}</td>
-                <td class="eta">{formatDuration(leg.dog / settings.average + departure(leg.departure))}</td>
+                <td class="ttg">{formatDuration(leg.dog / $store.settings.average)}</td>
+                <td class="eta">{formatDuration(leg.dog / $store.settings.average + departure(leg.departure))}</td>
                 <td class="color" style="background-color: {leg.color};">&nbsp;</td>
             {:else}
                 <td colspan="4" />
             {/if}
         </tr>
-        {#if leg.edit === 'edit' && canEdit}
+        {#if leg.edit === 'edit' && $store.canEdit}
             <td colspan="5">
                 <LegEditor
                     {leg}
@@ -81,7 +74,7 @@ function edit(leg, i) {
             </td>
         {/if}
     {/each}
-    {#if legs.length > 0}
+    {#if $store.legs.length > 0}
         <tr>
             <td colspan="2"><strong>Total:</strong></td>
             <td>{totals.dog}</td>
@@ -90,7 +83,7 @@ function edit(leg, i) {
             <td />
         </tr>
     {/if}
-    {#if canEdit}
+    {#if $store.canEdit}
         <tr>
             <td colspan="5" class="empty">
                 <button class="button" on:click={(e) => dispatch('new')}>Create leg</button>

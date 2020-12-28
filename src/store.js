@@ -4,12 +4,14 @@ import { transformFromLegacy } from './legacy.js';
 const EMPTY = {
     key: undefined,
     authToken: null,
+    canEdit: true,
     comment: '',
     settings: {
         average: 5,
         map: { center: [55.167423, 5.365761], zoom: 6 },
     },
     legs: [],
+    isDirty: true,
 };
 
 const EMPTY_LEG = {
@@ -37,11 +39,13 @@ export const createLeg = () => {
 
 const reset = () => {
     set(EMPTY);
+    window.location.hash = '';
 };
 
 export const updateSettings = (settings) => {
     update((s) => {
         s.settings = settings;
+        s.isDirty = true;
         return s;
     });
 };
@@ -49,6 +53,7 @@ export const updateSettings = (settings) => {
 export const updateLegs = (legs) => {
     update((s) => {
         s.legs = legs;
+        s.isDirty = true;
         return s;
     });
 };
@@ -57,8 +62,10 @@ export const fork = () => {
     update((s) => {
         s.authToken = null;
         s.key = undefined;
+        s.isDirty = true;
         return s;
     });
+    window.location.hash = '';
 };
 
 const API_URL = 'store.php';
@@ -69,13 +76,16 @@ export const load = async (key, authToken) => {
         url += `&authToken=${authToken}`;
     }
 
-    let data = await fetch(url).then((response) => {
+    const data = await fetch(url).then((response) => {
         if (response.status == 404) {
             return fetch(`http://sailplanner.nl/getLegs/key:${key}`)
                 .then((response) => response.json())
                 .then((data) => transformFromLegacy(data));
         } else {
-            return response.json();
+            let json = response.json();
+            json.isDirty = false;
+            json.canEdit = json.authToken || json.authToken === null;
+            return json;
         }
     });
 
@@ -96,7 +106,10 @@ export const save = async () => {
         body: JSON.stringify(state),
     });
     if (response.status == 200) {
-        set(await response.json());
+        let data = await response.json();
+        data.isDirty = false;
+        data.canEdit = true;
+        set(data);
         return `${state.key}|${state.authToken}`;
     } else {
         // Error!
