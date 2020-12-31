@@ -1,13 +1,10 @@
 <script>
-import { beforeUpdate, createEventDispatcher } from 'svelte';
+import { beforeUpdate } from 'svelte';
 
 import LegEditor from './LegEditor.svelte';
 import store from '../store.js';
 import { formatDuration, smartRound } from '../formatting.js';
 
-const dispatch = createEventDispatcher();
-
-let legs;
 let totals;
 
 beforeUpdate(() => {
@@ -29,12 +26,26 @@ function departure(time) {
     return +hours + +minutes / 60;
 }
 
-function edit(leg, i) {
-    return (e) => {
+function highlight(index, value) {
+    return () => {
+        let leg = $store.legs[index];
+        leg.highlight = value;
+        $store.legs = $store.legs;
+    };
+}
+function edit(index) {
+    return () => {
         if ($store.canEdit) {
-            dispatch('edit', { leg: i, value: leg.edit === 'edit' ? 'save' : 'edit' });
+            let leg = $store.legs[index];
+            leg.edit = leg.edit === 'edit' ? 'save' : 'edit';
+            $store.legs = $store.legs;
         }
     };
+}
+function deleteLeg(index) {
+    const legs = $store.legs;
+    legs.splice(index, 1);
+    $store.legs = legs;
 }
 </script>
 
@@ -47,12 +58,8 @@ function edit(leg, i) {
         <th class="eta" title="Estimated time of arrival">ETA</th>
         <th class="color" />
     </tr>
-    {#each $store.legs as leg, i (leg)}
-        <tr
-            on:mouseenter={(e) => dispatch('highlight', { leg: i, value: true })}
-            on:mouseleave={(e) => dispatch('highlight', { leg: i, value: false })}
-            on:click={edit(leg, i)}
-        >
+    {#each $store.legs as leg, index (leg)}
+        <tr on:mouseenter={highlight(index, true)} on:mouseleave={highlight(index, false)} on:click={edit(index)}>
             <td class="start">{leg.departure}</td>
             <td class="comment">{leg.comment}</td>
             {#if leg.dog > 0}
@@ -61,16 +68,13 @@ function edit(leg, i) {
                 <td class="eta">{formatDuration(leg.dog / $store.settings.average + departure(leg.departure))}</td>
                 <td class="color" style="background-color: {leg.color};">&nbsp;</td>
             {:else}
-                <td colspan="4" />
+                <td colspan="3">—</td>
+                <td />
             {/if}
         </tr>
-        {#if leg.edit === 'edit' && $store.canEdit}
+        {#if $store.canEdit && leg.edit === 'edit'}
             <td colspan="5">
-                <LegEditor
-                    {leg}
-                    on:save={(e) => dispatch('edit', { leg: i, value: 'save' })}
-                    on:delete={(e) => dispatch('delete', { leg: i, value: true })}
-                />
+                <LegEditor bind:leg on:save={edit(index)} on:delete={() => deleteLeg(index)} />
             </td>
         {/if}
     {/each}
@@ -85,9 +89,7 @@ function edit(leg, i) {
     {/if}
     {#if $store.canEdit}
         <tr>
-            <td colspan="5" class="empty">
-                <button class="button" on:click={(e) => dispatch('new')}>Create leg</button>
-            </td>
+            <td colspan="5" class="empty"><button class="button" on:click={store.createLeg}>Create leg</button></td>
         </tr>
     {/if}
 </table>

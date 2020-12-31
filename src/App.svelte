@@ -15,6 +15,12 @@ import './planner.css';
 let url;
 let modal;
 
+const modals = [
+    ['prose/about.md', 'About / FAQ'],
+    ['prose/quickstart.md', 'Quickstart'],
+    ['prose/howto.md', 'Howto'],
+];
+
 async function loadFromHash() {
     let key = window.location.hash.substring(1);
     let authToken;
@@ -70,15 +76,8 @@ function exportPlanner(format) {
     tag.click();
 }
 
-function setAction(event) {
-    store.update((state) => {
-        state.legs[event.detail.leg][event.type] = event.detail.value;
-        state.legs = state.legs;
-        return state;
-    });
-}
-
 $: {
+    // console.log($store.isDirty);
     url = window.location.origin + window.location.pathname + '#' + $store.key;
 }
 </script>
@@ -93,7 +92,7 @@ $: {
         {/if}
     </h1>
     <Comment />
-    <LegsTable on:new={(e) => store.createLeg()} on:edit={setAction} on:highlight={setAction} on:delete={setAction} />
+    <LegsTable />
 
     <fieldset class="settings">
         <legend>Settings</legend>
@@ -144,12 +143,7 @@ $: {
     </fieldset>
 
     <div class="links">
-        <button on:click={(e) => showModal('prose/about.md')}>About / FAQ</button>
-        |
-        <button on:click={(e) => showModal('prose/quickstart.md')}>Quickstart</button>
-        |
-        <button on:click={(e) => showModal('prose/howto.md')}>Howto</button>
-        |
+        {#each modals as [contents, label]}<button on:click={(e) => showModal(contents)}>{label}</button> |&nbsp;{/each}
         <a href="https://github.com/jieter/sailplanner.nl" target="_new">GitHub</a>
     </div>
     <div id="disclaimer">
@@ -163,7 +157,7 @@ $: {
 </div>
 <Map>
     {#each $store.legs as leg (leg)}
-        <Polyline {leg} />
+        <Polyline bind:leg />
     {/each}
 </Map>
 

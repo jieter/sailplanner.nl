@@ -63,6 +63,7 @@ export const fork = () => {
         s.authToken = null;
         s.key = undefined;
         s.isDirty = true;
+        s.canEdit = true;
         return s;
     });
     window.location.hash = '';
@@ -100,6 +101,11 @@ export const save = async () => {
     } else {
         url = API_URL;
     }
+    // Make sure the editing state is forgotten.
+    state.legs = state.legs.map((leg) => {
+        delete leg.edit, leg.highlight;
+        return leg;
+    });
     let response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
