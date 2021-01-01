@@ -42,22 +42,6 @@ const reset = () => {
     window.location.hash = '';
 };
 
-export const updateSettings = (settings) => {
-    update((s) => {
-        s.settings = settings;
-        s.isDirty = true;
-        return s;
-    });
-};
-
-export const updateLegs = (legs) => {
-    update((s) => {
-        s.legs = legs;
-        s.isDirty = true;
-        return s;
-    });
-};
-
 export const fork = () => {
     update((s) => {
         s.authToken = null;
@@ -130,8 +114,6 @@ export default {
     reset,
     addLeg,
     createLeg,
-    updateSettings,
-    updateLegs,
     fork,
     save,
     load,

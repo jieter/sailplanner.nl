@@ -78,7 +78,7 @@ function deleteLeg(index) {
             </td>
         {/if}
     {/each}
-    {#if $store.legs.length > 0}
+    {#if totals.dog > 0}
         <tr>
             <td colspan="2"><strong>Total:</strong></td>
             <td>{totals.dog}</td>
