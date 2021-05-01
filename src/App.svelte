@@ -8,7 +8,7 @@ import Comment from './components/Comment.svelte';
 
 import { asGeoJSON, asGPX, asKML } from './exports.js';
 import { onMount } from 'svelte';
-import store from './store.js';
+import { legs, options, canEdit, isDirty, load, persist, reset, fork } from './store.js';
 
 import './planner.css';
 
@@ -33,7 +33,7 @@ async function loadFromHash() {
     if (key.indexOf('|') > 0) {
         [key, authToken] = key.split('|');
     }
-    store.load(key, authToken);
+    load(key, authToken);
 }
 
 onMount(() => {
@@ -49,7 +49,7 @@ onMount(() => {
 });
 
 async function save() {
-    let hash = await store.save();
+    let hash = await persist();
 
     if (hash) {
         window.location.hash = hash;
@@ -67,7 +67,10 @@ const exportFormats = {
 };
 
 function exportPlanner(format) {
-    const contents = exportFormats[format]($store, url);
+    const data = Objects.assign({}, $options);
+    data.legs = $legs;
+
+    const contents = exportFormats[format](data, url);
 
     let tag = document.createElement('a');
     tag.href = `data:text/json;charset=utf-8,${encodeURIComponent(contents)}`;
@@ -77,18 +80,17 @@ function exportPlanner(format) {
 }
 
 $: {
-    // console.log($store.isDirty);
-    url = window.location.origin + window.location.pathname + '#' + $store.key;
+    url = window.location.origin + window.location.pathname + '#' + $options.key;
 }
 </script>
 
 <div id="sidebar">
     <h1>
         Sailplanner
-        {#if $store.created}
+        {#if $options.created}
             <small
-                title="Created: {$store.created.substring(0, 16)} Last modified: {$store.modified.substring(0, 16)}"
-            >{$store.created.substring(0, 10)}</small>
+                title="Created: {$options.created.substring(0, 16)} Last modified: {$options.modified.substring(0, 16)}"
+            >{$options.created.substring(0, 10)}</small>
         {/if}
     </h1>
     <Comment />
@@ -97,15 +99,15 @@ $: {
     <fieldset class="settings">
         <legend>Settings</legend>
         <label for="average">Average <abbr title="Speed Over Ground">SOG</abbr>:</label>
-        <input name="average" type="number" bind:value={$store.settings.average} min="0" max="40" />&nbsp;kts<br />
+        <input name="average" type="number" bind:value={$options.settings.average} min="0" max="40" />&nbsp;kts<br />
     </fieldset>
 
     <fieldset class="settings">
         <legend>Sharing &amp; editing</legend>
 
-        {#if $store.legacyUrl}
-            <Url label="Legacy URL:" url={$store.legacyUrl}>
-                {#if !$store.canEdit}
+        {#if $options.legacyUrl}
+            <Url label="Legacy URL:" url={$options.legacyUrl}>
+                {#if !$canEdit}
                     <p>
                         This is a legacy planner. Use the 'Copy' button below to transfer it to the current version. It
                         will receive a new url.
@@ -113,15 +115,15 @@ $: {
                 {/if}
             </Url>
         {/if}
-        {#if $store.key}
+        {#if $options.key}
             <Url label="Read only URL:" {url} />
-            {#if $store.authToken}
-                <Url label="Editable URL:" url={`${url}|${$store.authToken}`} />
+            {#if $options.authToken}
+                <Url label="Editable URL:" url={`${url}|${$options.authToken}`} />
             {/if}
         {/if}
-        {#if $store.legs.length > 0}
-            <button class="button" title="Start over..." on:click={store.reset}>New</button>
-            <button class="button" title="Copy this planner..." on:click={store.fork}>Copy</button>
+        {#if $legs.length > 0}
+            <button class="button" title="Start over..." on:click={reset}>New</button>
+            <button class="button" title="Copy this planner..." on:click={fork}>Copy</button>
 
             <button class="button dropdown" title="Various export methods">
                 Export
@@ -131,9 +133,9 @@ $: {
                     {/each}
                 </div>
             </button>
-            {#if $store.canEdit}
+            {#if $canEdit}
                 <button class="button pull-right" title="Save state planner to the server..." on:click={save}>
-                    {#if !$store.isDirty}<span color="green">✓</span>{/if}
+                    {#if !$isDirty}<span color="green">✓</span>{/if}
                     Save
                 </button>
             {/if}
@@ -156,7 +158,7 @@ $: {
     <Modal bind:this={modal} />
 </div>
 <Map>
-    {#each $store.legs as leg (leg)}
+    {#each $legs as leg (leg)}
         <Polyline bind:leg />
     {/each}
 </Map>

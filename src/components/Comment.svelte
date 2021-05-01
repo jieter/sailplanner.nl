@@ -2,7 +2,7 @@
 import marked from 'marked';
 import DOMPurify from 'dompurify';
 
-import store from '../store.js';
+import { options, canEdit } from '../store.js';
 
 let editing = false;
 
@@ -12,13 +12,13 @@ function toggleEdit() {
 </script>
 
 <div id="comment">
-    {@html DOMPurify.sanitize(marked($store.comment))}
+    {@html DOMPurify.sanitize(marked($options.comment))}
     {#if editing}
-        <textarea bind:value={$store.comment} />
+        <textarea bind:value={$options.comment} />
         <button on:click={toggleEdit}>Save</button>
-    {:else if $store.canEdit}
+    {:else if $canEdit}
         <button class="button" on:click={toggleEdit}>
-            {#if !$store.comment}Add{:else}Edit{/if}
+            {#if !$options.comment}Add{:else}Edit{/if}
             comment
         </button>
     {/if}

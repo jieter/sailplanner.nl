@@ -82,8 +82,8 @@ No authorization is required, the body is saved in the store, it is returned inc
  - [x] Read only mode.
  - [x] Update `location.hash` on key changes, watch it for changes too.
  - [x] Only show quickstart on first load, store state in `localStorage`.
- - [x] Test KML export
- - [x] Test GPX expor
+ - [x] Test KML exporter
+ - [x] Test GPX exporter
 
 
 
