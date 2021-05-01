@@ -2,19 +2,19 @@
 import { beforeUpdate } from 'svelte';
 
 import LegEditor from './LegEditor.svelte';
-import store from '../store.js';
+import { createLeg, canEdit, legs, options } from '../store.js';
 import { formatDuration, smartRound } from '../formatting.js';
 
 let totals;
 
 beforeUpdate(() => {
-    let dog = $store.legs.map((leg) => leg.dog).reduce((a, b) => a + b, 0);
+    let dog = $legs.map((leg) => leg.dog).reduce((a, b) => a + b, 0);
     if (isNaN(dog) || dog == 0) {
         totals = { dog: 0, ttg: 0 };
     } else {
         totals = {
             dog: smartRound(dog),
-            ttg: formatDuration(dog / $store.settings.average),
+            ttg: formatDuration(dog / $options.settings.average),
         };
     }
 });
@@ -28,24 +28,24 @@ function departure(time) {
 
 function highlight(index, value) {
     return () => {
-        let leg = $store.legs[index];
+        let leg = $legs[index];
         leg.highlight = value;
-        $store.legs = $store.legs;
+        $legs = $legs;
     };
 }
 function edit(index) {
     return () => {
-        if ($store.canEdit) {
-            let leg = $store.legs[index];
+        if ($canEdit) {
+            let leg = $legs[index];
             leg.edit = leg.edit === 'edit' ? 'save' : 'edit';
-            $store.legs = $store.legs;
+            $legs = $legs;
         }
     };
 }
 function deleteLeg(index) {
-    const legs = $store.legs;
-    legs.splice(index, 1);
-    $store.legs = legs;
+    legs.update((currentLegs) => {
+        return legs.splice(index, 1);
+    });
 }
 </script>
 
@@ -58,21 +58,21 @@ function deleteLeg(index) {
         <th class="eta" title="Estimated time of arrival">ETA</th>
         <th class="color" />
     </tr>
-    {#each $store.legs as leg, index (leg)}
+    {#each $legs as leg, index (leg)}
         <tr on:mouseenter={highlight(index, true)} on:mouseleave={highlight(index, false)} on:click={edit(index)}>
             <td class="start">{leg.departure}</td>
             <td class="comment">{leg.comment}</td>
             {#if leg.dog > 0}
                 <td class="dog">{smartRound(leg.dog)}</td>
-                <td class="ttg">{formatDuration(leg.dog / $store.settings.average)}</td>
-                <td class="eta">{formatDuration(leg.dog / $store.settings.average + departure(leg.departure))}</td>
+                <td class="ttg">{formatDuration(leg.dog / $options.settings.average)}</td>
+                <td class="eta">{formatDuration(leg.dog / $options.settings.average + departure(leg.departure))}</td>
                 <td class="color" style="background-color: {leg.color};">&nbsp;</td>
             {:else}
                 <td colspan="3">—</td>
                 <td />
             {/if}
         </tr>
-        {#if $store.canEdit && leg.edit === 'edit'}
+        {#if $canEdit && leg.edit === 'edit'}
             <td colspan="5">
                 <LegEditor bind:leg on:save={edit(index)} on:delete={() => deleteLeg(index)} />
             </td>
@@ -87,9 +87,9 @@ function deleteLeg(index) {
             <td />
         </tr>
     {/if}
-    {#if $store.canEdit}
+    {#if $canEdit}
         <tr>
-            <td colspan="5" class="empty"><button class="button" on:click={store.createLeg}>Create leg</button></td>
+            <td colspan="5" class="empty"><button class="button" on:click={createLeg}>Create leg</button></td>
         </tr>
     {/if}
 </table>

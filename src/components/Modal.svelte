@@ -74,8 +74,6 @@ export function close() {
 .button {
     display: block;
     float: right;
-    margin-left: 100px;
-    width: 60px;
     padding: 2px;
     text-decoration: none;
     text-align: center;

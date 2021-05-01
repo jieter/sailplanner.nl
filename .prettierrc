@@ -1,5 +1,5 @@
 {
-  "svelteSortOrder" : "scripts-markup-styles",
+  "svelteSortOrder" : "options-scripts-markup-styles",
   "svelteBracketNewLine": true,
   "svelteIndentScriptAndStyle": false,
   "tabWidth": 4,

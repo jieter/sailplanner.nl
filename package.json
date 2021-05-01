@@ -12,34 +12,43 @@
         "dev": "rollup -c -w",
         "start": "php -S 127.0.0.1:8000 -t public/",
         "eslint": "eslint src/ test/",
-        "format": "prettier --write --plugin-search-dir=. src/",
-        "test": "mocha -r esm",
-        "publish": "npm run build && rsync  -e \"ssh -o StrictHostKeyChecking=no\" -a public/ jieter@jieter.nl:/srv/www/sailplanner.nl/htdocs/beta"
+        "format": "prettier --write --plugin-search-dir=. src/ test/ wdio/",
+        "test": "npm run spec && npm run interaction",
+        "spec": "mocha -r esm",
+        "publish": "npm run build && rsync  -e \"ssh -o StrictHostKeyChecking=no\" -a public/ jieter@jieter.nl:/srv/www/sailplanner.nl/htdocs/beta",
+        "interaction": "wdio run wdio/wdio.conf.js"
     },
     "devDependencies": {
-        "@rollup/plugin-commonjs": "^17.0.0",
-        "@rollup/plugin-node-resolve": "^11.0.1",
-        "eslint": "^7.16.0",
-        "eslint-plugin-svelte3": "^2.7.3",
+        "@rollup/plugin-commonjs": "^18.0.0",
+        "@rollup/plugin-node-resolve": "^11.2.1",
+        "@wdio/cli": "^7.5.3",
+        "@wdio/local-runner": "^7.5.4",
+        "@wdio/mocha-framework": "^7.5.3",
+        "@wdio/spec-reporter": "^7.5.3",
+        "chai": "^4.3.4",
+        "chromedriver": "^90.0.0",
+        "eslint": "^7.25.0",
+        "eslint-plugin-svelte3": "^3.2.0",
         "esm": "^3.2.25",
-        "mocha": "^8.2.1",
+        "mocha": "^8.3.2",
         "node-fetch": "^2.6.1",
         "prettier": "^2.2.1",
-        "prettier-plugin-svelte": "^1.4.2",
-        "rollup": "^2.35.1",
+        "prettier-plugin-svelte": "^2.2.0",
+        "rollup": "^2.46.0",
         "rollup-plugin-analyzer": "^4.0.0",
         "rollup-plugin-css-only": "^3.1.0",
         "rollup-plugin-livereload": "^2.0.0",
-        "rollup-plugin-svelte": "^7.0.0",
+        "rollup-plugin-svelte": "^7.1.0",
         "rollup-plugin-terser": "^7.0.2",
-        "sirv-cli": "^1.0.10",
-        "svelte": "^3.31.0"
+        "sirv-cli": "^1.0.11",
+        "svelte": "^3.38.1",
+        "wdio-chromedriver-service": "^7.0.0"
     },
     "dependencies": {
-        "dompurify": "^2.2.6",
+        "dompurify": "^2.2.8",
         "leaflet": "^1.7.1",
         "leaflet-editable": "^1.2.0",
-        "marked": "^1.2.7",
+        "marked": "^2.0.3",
         "polyline-encoded": "0.0.9"
     },
     "eslintConfig": {
@@ -54,14 +63,12 @@
         "plugins": [
             "svelte3"
         ],
-        "overrides": [
-            {
-                "files": [
-                    "*.svelte"
-                ],
-                "processor": "svelte3/svelte3"
-            }
-        ],
+        "overrides": [{
+            "files": [
+                "*.svelte"
+            ],
+            "processor": "svelte3/svelte3"
+        }],
         "rules": {
             "semi": [
                 "error",

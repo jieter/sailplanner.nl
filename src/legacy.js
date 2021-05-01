@@ -3,6 +3,9 @@ import { roundn } from './formatting.js';
 /* Take a json of legacy sailplanner.nl and turn into the current format.
  */
 function transformFromLegacy(old) {
+    if (!old || !old.data) {
+        return undefined;
+    }
     const options = old.data.options;
 
     let data = {

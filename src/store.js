@@ -1,59 +1,54 @@
 import { writable } from 'svelte/store';
 import { transformFromLegacy } from './legacy.js';
+import { get } from 'svelte/store';
 
-const EMPTY = {
+const API_URL = 'store.php';
+
+const createEmpty = () => ({
     key: undefined,
     authToken: null,
-    canEdit: true,
     comment: '',
     settings: {
         average: 5,
         map: { center: [55.167423, 5.365761], zoom: 6 },
     },
-    legs: [],
-    isDirty: true,
-};
+});
 
-const EMPTY_LEG = {
-    comment: '',
-    color: '#ff0000',
-    width: 2,
-    departure: '10:00',
-    edit: 'edit',
-};
-
-export const { subscribe, set, update } = writable(EMPTY);
-
-let state;
-subscribe((s) => (state = s));
-
-const addLeg = (leg) =>
-    update((s) => {
-        s.legs = [...s.legs, leg];
-        return s;
-    });
+export const canEdit = writable(true);
+export const isDirty = writable(true);
+export const legs = writable([]);
+export const options = writable(createEmpty());
 
 export const createLeg = () => {
-    addLeg(Object.assign({}, EMPTY_LEG));
+    const newLeg = {
+        comment: '',
+        color: '#ff0000',
+        width: 2,
+        departure: '10:00',
+        edit: 'edit',
+    };
+    legs.update((currentLegs) => [...currentLegs, newLeg]);
 };
 
-const reset = () => {
-    set(EMPTY);
+export const reset = () => {
+    options.set(createEmpty());
+    legs.set([]);
+    isDirty.set(false);
+    canEdit.set(true);
     window.location.hash = '';
 };
 
 export const fork = () => {
-    update((s) => {
-        s.authToken = null;
-        s.key = undefined;
-        s.isDirty = true;
-        s.canEdit = true;
-        return s;
+    isDirty.set(true);
+    canEdit.set(true);
+
+    options.update((currentOptions) => {
+        currentOptions.authToken = null;
+        currentOptions.key = undefined;
+        return currentOptions;
     });
     window.location.hash = '';
 };
-
-const API_URL = 'store.php';
 
 export const load = async (key, authToken) => {
     let url = `${API_URL}?key=${key}`;
@@ -74,47 +69,50 @@ export const load = async (key, authToken) => {
         }
     });
 
-    set(data);
+    if (!data) {
+        reset();
+        return;
+    }
+
+    canEdit.set(data.canEdit);
+    isDirty.set(false);
+    legs.set(data.legs);
+
+    options.set(data);
 };
 
-export const save = async () => {
-    let url;
-
-    if (state.authToken) {
-        url = `${API_URL}?key=${state.key}&authToken=${state.authToken}`;
-    } else {
-        url = API_URL;
-    }
+export const persist = async () => {
     // Make sure the editing state is forgotten.
-    state.legs = state.legs.map((leg) => {
+    const data = Object.assign({}, get(options));
+    data.legs = get(legs).map((leg) => {
         delete leg.edit, leg.highlight;
         return leg;
     });
+
+    let url;
+    if (data.authToken) {
+        url = `${API_URL}?key=${data.key}&authToken=${data.authToken}`;
+    } else {
+        url = API_URL;
+    }
+
     let response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(state),
+        body: JSON.stringify(data),
     });
     if (response.status == 200) {
         let data = await response.json();
-        data.isDirty = false;
-        data.canEdit = true;
-        set(data);
-        return `${state.key}|${state.authToken}`;
+        isDirty.set(false);
+        canEdit.set(true);
+
+        legs.set(data.legs);
+        delete data.legs;
+        options.set(data);
+
+        return `${data.key}|${data.authToken}`;
     } else {
         // Error!
         return false;
     }
-};
-
-export default {
-    subscribe,
-    set,
-    update,
-    reset,
-    addLeg,
-    createLeg,
-    fork,
-    save,
-    load,
 };

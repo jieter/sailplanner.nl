@@ -33,7 +33,7 @@ const setColor = (color) => () => {
 };
 </script>
 
-<fieldset class="settings">
+<fieldset class="leg-settings settings">
     <legend>Edit leg</legend>
 
     <label for="comment">Comment:</label>
