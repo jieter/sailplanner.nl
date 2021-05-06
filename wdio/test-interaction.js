@@ -16,14 +16,12 @@ describe('Sailplanner.nl', () => {
             await page.open();
             expect(modal).not.toBeVisible();
             expect(modal).toHaveTextContaining('Welcome to sailplanner');
-            console.log(modal.getText());
         });
 
         it('Allows adding a comment', async () => {
             await page.open();
 
-            const button = await page.addCommentButton;
-            await button.click();
+            await (await page.addCommentButton).click();
 
             const textarea = await $('textarea');
             expect(textarea).toBeVisible();
@@ -31,8 +29,7 @@ describe('Sailplanner.nl', () => {
 
             (await $('button=Save comment')).click();
 
-            const comment = await $('#comment');
-            expect(comment).toHaveTextContaining('Planning my next trip');
+            expect(await $('#comment')).toHaveTextContaining('Planning my next trip');
         });
 
         it('Allows creating a new leg', async () => {
@@ -54,12 +51,35 @@ describe('Sailplanner.nl', () => {
 
             const table = await page.legsTable;
             expect(table).toHaveTextContaining('IJmuiden - Newcastle');
-            await browser.saveScreenshot('./table.png');
+            expect(await table.$('//tr[2]/td[3]')).toHaveTextContaining('80.1');
+            expect(await table.$('//tr[2]/td[4]')).toHaveTextContaining('16:02');
+            expect(await table.$('//tr[2]/td[5]')).toHaveTextContaining('1d 2:02');
 
             const saveButton = await page.saveButton;
             await saveButton.click();
 
-            const shareAndEdit = await (await $('legend=Sharing & editing')).parent;
+            const sharing = await (await $('legend=Sharing & editing')).parent;
+
+            const readOnlyUrl = await sharing.$('//input[1]');
+            expect(readOnlyUrl).toHaveTextContaining(page.baseUrl);
+            await browser.saveScreenshot('./screenshots/create-new-leg.png');
+        });
+    });
+
+    describe('With hash', () => {
+        it('Loads an existing planner', async () => {
+            await page.open('zomer2011');
+
+            expect(await $('#comment')).toHaveTextContaining(
+                'Zomerzeilen 2011. Rondje Noordzee met Schotland, Noorwegen en wellicht Denemarken.'
+            );
+
+            const sharing = await (await $('legend=Sharing & editing')).parent;
+
+            const legacyUrl = await sharing.$('//input[1]');
+            expect(legacyUrl).toHaveTextContaining('http://sailplanner.nl/view/key:zomer2011');
+
+            await browser.saveScreenshot('./screenshots/zomer2011.png');
         });
     });
 });
