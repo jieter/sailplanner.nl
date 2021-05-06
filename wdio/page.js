@@ -50,6 +50,9 @@ class Page {
     get saveButton() {
         return $('button=Save');
     }
+    get forkButton() {
+        return $('button=Copy');
+    }
 
     async clickMap(x, y) {
         const map = await this.map;

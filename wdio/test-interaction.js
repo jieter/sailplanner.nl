@@ -35,8 +35,7 @@ describe('Sailplanner.nl', () => {
         it('Allows creating a new leg', async () => {
             await page.open();
 
-            const createButton = await page.createLegButton;
-            createButton.click();
+            await (await page.createLegButton).click();
 
             const legSettings = await page.legSettings;
             const commentInput = await legSettings.$('[name="comment"]');
@@ -55,14 +54,28 @@ describe('Sailplanner.nl', () => {
             expect(await table.$('//tr[2]/td[4]')).toHaveTextContaining('16:02');
             expect(await table.$('//tr[2]/td[5]')).toHaveTextContaining('1d 2:02');
 
-            const saveButton = await page.saveButton;
-            await saveButton.click();
+            await (await page.saveButton).click();
 
             const sharing = await (await $('legend=Sharing & editing')).parent;
 
             const readOnlyUrl = await sharing.$('//input[1]');
             expect(readOnlyUrl).toHaveTextContaining(page.baseUrl);
+
+            const [url, fragment] = (await browser.getUrl()).split('#');
+            const [key, authToken] = fragment.split('|');
+            expect(url).toBe(page.baseUrl + '/');
+            expect(key.length).toBe(12);
+            expect(authToken.length).toBe(12);
+
             await browser.saveScreenshot('./screenshots/create-new-leg.png');
+
+            // Open the saved planner without authToken, should be read-only
+            await page.open(key);
+            expect(await $('button=Save')).not.toBePresent();
+
+            // Open the saved planner with the authToken, should be editable
+            await page.open(fragment);
+            expect(await $('button=Save')).toBePresent();
         });
     });
 
@@ -80,6 +93,24 @@ describe('Sailplanner.nl', () => {
             expect(legacyUrl).toHaveTextContaining('http://sailplanner.nl/view/key:zomer2011');
 
             await browser.saveScreenshot('./screenshots/zomer2011.png');
+
+            // Fork the planner, add another
+            await (await page.forkButton).click();
+
+            await (await page.createLegButton).click();
+            const legSettings = await page.legSettings;
+            const commentInput = await legSettings.$('[name="comment"]');
+            await commentInput.setValue('Boven Parijs');
+
+            const map = await page.map;
+            await map.moveTo();
+            await map.click({ x: -30, y: 200 });
+            await map.click({ x: -130, y: 200 });
+
+            (await $('button=Save leg')).click();
+
+            await (await page.saveButton).click();
+            await browser.saveScreenshot('./screenshots/zomer2011-forked.png');
         });
     });
 });
