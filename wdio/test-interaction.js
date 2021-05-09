@@ -1,9 +1,10 @@
 /* globals browser:true, expect:true, $:true */
+const fs = require('fs');
 
 const page = require('./page');
 
 describe('Sailplanner.nl', () => {
-    describe('Without hash', () => {
+    describe.skip('Without hash', () => {
         it('Quickstart should be visible once', async () => {
             await page.open();
 
@@ -79,7 +80,7 @@ describe('Sailplanner.nl', () => {
         });
     });
 
-    describe('With hash', () => {
+    describe.skip('With hash', () => {
         it('Loads an existing planner', async () => {
             await page.open('zomer2011');
 
@@ -111,6 +112,35 @@ describe('Sailplanner.nl', () => {
 
             await (await page.saveButton).click();
             await browser.saveScreenshot('./screenshots/zomer2011-forked.png');
+        });
+    });
+    describe('Exporting', async () => {
+        const getDownloadedFile = async (ext) => {
+            return fs.readFileSync(`/tmp/downloads/sailplanner.${ext}`);
+        };
+        it('to GeoJSON', async () => {
+            await page.open('zomer2011');
+            const exportButton = await $('button*=Export');
+            await exportButton.moveTo();
+
+            await (await $('div=GeoJSON')).click();
+        });
+        it('to GPX', async () => {
+            await page.open('zomer2011');
+            const exportButton = await $('button*=Export');
+            await exportButton.moveTo();
+
+            await (await $('div=GPX')).click();
+            console.log(getDownloadedFile('gpx'));
+        });
+        it('to KML', async () => {
+            await page.open('zomer2011');
+            const exportButton = await $('button*=Export');
+            await exportButton.moveTo();
+
+            await (await $('div=KML')).click();
+
+            await browser.pause(2000);
         });
     });
 });

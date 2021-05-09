@@ -67,7 +67,7 @@ const exportFormats = {
 };
 
 function exportPlanner(format) {
-    const data = Objects.assign({}, $options);
+    const data = Object.assign({}, $options);
     data.legs = $legs;
 
     const contents = exportFormats[format](data, url);

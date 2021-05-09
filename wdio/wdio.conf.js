@@ -1,3 +1,8 @@
+const path = require('path');
+const fs = require('fs');
+
+const downloadDir = '/tmp/downloads/';
+
 exports.config = {
     runner: 'local',
     specs: ['./wdio/test-*.js'],
@@ -7,8 +12,29 @@ exports.config = {
         {
             maxInstances: 1,
             browserName: 'chromium',
+            chromeOptions: {
+                prefs: {
+                    download: {
+                        default_directory: downloadDir,
+                    },
+                },
+            },
+
             'goog:chromeOptions': {
                 headless: process.argv.includes('--headless'),
+                prefs: {
+                    download: {
+                        directory_upgrade: true,
+                        prompt_for_download: false,
+                        default_directory: downloadDir,
+                    },
+                    browser: {
+                        setDownloadBehavior: {
+                            behavior: 'allow',
+                            downloadPath: downloadDir,
+                        },
+                    },
+                },
             },
         },
     ],
@@ -19,7 +45,7 @@ exports.config = {
     baseUrl: 'http://localhost:8000/',
     // Default request retries count
     connectionRetryCount: 3,
-    waitforTimeout: 50000,
+    waitforTimeout: 5000,
     //
     // Test runner services
     // Services take over a specific job you don't want to take care of. They enhance
@@ -54,5 +80,14 @@ exports.config = {
     mochaOpts: {
         ui: 'bdd',
         timeout: 60000,
+    },
+
+    onPrepare: () => {
+        if (!fs.existsSync(downloadDir)) {
+            fs.mkdirSync(downloadDir);
+        }
+    },
+    onComplete: () => {
+        // fs.rmdirSync(downloadDir, { recursive: true });
     },
 };
