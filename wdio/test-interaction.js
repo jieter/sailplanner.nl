@@ -4,7 +4,7 @@ const fs = require('fs');
 const page = require('./page');
 
 describe('Sailplanner.nl', () => {
-    describe.skip('Without hash', () => {
+    describe('Without hash', () => {
         it('Quickstart should be visible once', async () => {
             await page.open();
 
@@ -80,7 +80,7 @@ describe('Sailplanner.nl', () => {
         });
     });
 
-    describe.skip('With hash', () => {
+    describe('With hash', () => {
         it('Loads an existing planner', async () => {
             await page.open('zomer2011');
 
@@ -115,32 +115,30 @@ describe('Sailplanner.nl', () => {
         });
     });
     describe('Exporting', async () => {
-        const getDownloadedFile = async (ext) => {
-            return fs.readFileSync(`/tmp/downloads/sailplanner.${ext}`);
+        const getDownloadedFile = async (button, ext) => {
+            await page.open('zomer2011');
+            const exportButton = await $('button*=Export');
+            await exportButton.moveTo();
+            await (await $('div=' + button)).click();
+
+            await browser.pause(250);
+            return fs.readFileSync(`${global.downloadDir}sailplanner.${ext}`, 'utf-8');
         };
-        it('to GeoJSON', async () => {
-            await page.open('zomer2011');
-            const exportButton = await $('button*=Export');
-            await exportButton.moveTo();
-
-            await (await $('div=GeoJSON')).click();
-        });
         it('to GPX', async () => {
-            await page.open('zomer2011');
-            const exportButton = await $('button*=Export');
-            await exportButton.moveTo();
-
-            await (await $('div=GPX')).click();
-            console.log(getDownloadedFile('gpx'));
+            const contents = await getDownloadedFile('GPX', 'gpx');
+            console.log(contents);
+            contents.includes('Terug naar Lemmer');
+            contents.includes('http://localhost:8000/#zomer2011');
         });
         it('to KML', async () => {
-            await page.open('zomer2011');
-            const exportButton = await $('button*=Export');
-            await exportButton.moveTo();
-
-            await (await $('div=KML')).click();
-
-            await browser.pause(2000);
+            const contents = await getDownloadedFile('KML', 'kml');
+            contents.includes('Terug naar Lemmer');
+            contents.includes('http://localhost:8000/#zomer2011');
+        });
+        it('to GeoJSON', async () => {
+            const contents = await getDownloadedFile('GeoJSON', 'geojson');
+            contents.includes('Terug naar Lemmer');
+            contents.includes('http://localhost:8000/#zomer2011');
         });
     });
 });

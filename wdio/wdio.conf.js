@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 
-const downloadDir = '/tmp/downloads/';
+const downloadDir = (global.downloadDir = '/tmp/downloads/');
 
 exports.config = {
     runner: 'local',
@@ -11,28 +11,14 @@ exports.config = {
     capabilities: [
         {
             maxInstances: 1,
-            browserName: 'chromium',
-            chromeOptions: {
+            browserName: 'chrome',
+            'goog:chromeOptions': {
+                // headless: process.argv.includes('--headless'),
                 prefs: {
                     download: {
                         default_directory: downloadDir,
-                    },
-                },
-            },
-
-            'goog:chromeOptions': {
-                headless: process.argv.includes('--headless'),
-                prefs: {
-                    download: {
-                        directory_upgrade: true,
                         prompt_for_download: false,
                         default_directory: downloadDir,
-                    },
-                    browser: {
-                        setDownloadBehavior: {
-                            behavior: 'allow',
-                            downloadPath: downloadDir,
-                        },
                     },
                 },
             },
@@ -88,6 +74,6 @@ exports.config = {
         }
     },
     onComplete: () => {
-        // fs.rmdirSync(downloadDir, { recursive: true });
+        fs.rmdirSync(downloadDir, { recursive: true });
     },
 };
