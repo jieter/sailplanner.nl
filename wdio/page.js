@@ -50,6 +50,9 @@ class Page {
     get saveButton() {
         return $('button=Save');
     }
+    get newButton() {
+        return $('button=New');
+    }
     get forkButton() {
         return $('button=Copy');
     }

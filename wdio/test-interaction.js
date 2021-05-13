@@ -117,6 +117,18 @@ describe('Sailplanner.nl', () => {
             expect(saveButton).toBeVisible();
             expect(saveButton).toHaveTextContaining('✓');
         });
+        it('clears the editor on hitting "new"', async () => {
+            await page.open('zomer2011');
+
+            await (await page.newButton).click();
+
+            expect(await $('#comment')).not.toHaveTextContaining(
+                'Zomerzeilen 2011. Rondje Noordzee met Schotland, Noorwegen en wellicht Denemarken.'
+            );
+
+            const sharing = await (await $('legend=Sharing & editing')).parent;
+            expect(sharing).toHaveTextContaining('Start by adding your first leg');
+        });
     });
     describe('Exporting', async () => {
         const getDownloadedFile = async (button, ext) => {
