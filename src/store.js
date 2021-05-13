@@ -16,6 +16,10 @@ const createEmpty = () => ({
 
 export const canEdit = writable(true);
 export const isDirty = writable(true);
+
+canEdit.subscribe((s) => {
+    console.log(s);
+});
 export const legs = writable([]);
 export const options = writable(createEmpty());
 
@@ -56,14 +60,15 @@ export const load = async (key, authToken) => {
         url += `&authToken=${authToken}`;
     }
 
-    const data = await fetch(url).then((response) => {
+    const data = await fetch(url).then(async (response) => {
         if (response.status == 404) {
             return fetch(`http://sailplanner.nl/getLegs/key:${key}`)
                 .then((response) => response.json())
                 .then((data) => transformFromLegacy(data));
         } else {
-            let json = response.json();
+            let json = await response.json();
             json.isDirty = false;
+            console.log(json);
             json.canEdit = json.authToken || json.authToken === null;
             return json;
         }

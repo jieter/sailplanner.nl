@@ -110,8 +110,12 @@ describe('Sailplanner.nl', () => {
 
             (await $('button=Save leg')).click();
 
-            await (await page.saveButton).click();
+            const saveButton = await page.saveButton;
+            await saveButton.click();
             await browser.saveScreenshot('./screenshots/zomer2011-forked.png');
+
+            expect(saveButton).toBeVisible();
+            expect(saveButton).toHaveTextContaining('✓');
         });
     });
     describe('Exporting', async () => {
@@ -121,7 +125,7 @@ describe('Sailplanner.nl', () => {
             await exportButton.moveTo();
             await (await $('div=' + button)).click();
 
-            await browser.pause(250);
+            await browser.pause(100);
             return fs.readFileSync(`${global.downloadDir}sailplanner.${ext}`, 'utf-8');
         };
         it('to GPX', async () => {

@@ -10,6 +10,7 @@ function transformFromLegacy(old) {
 
     let data = {
         legacyUrl: old.url.replace('/', '/'),
+        canEdit: false,
         comment: options.comment,
         settings: {
             average: options.average || 5,
