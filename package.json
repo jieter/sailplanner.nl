@@ -47,7 +47,7 @@
         "dompurify": "^2.2.8",
         "leaflet": "^1.7.1",
         "leaflet-editable": "^1.2.0",
-        "marked": "^2.0.3",
+        "marked": "^4.0.10",
         "polyline-encoded": "0.0.9"
     },
     "eslintConfig": {
