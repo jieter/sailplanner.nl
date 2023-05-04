@@ -1,9 +1,10 @@
 # Modern remake of sailplanner.nl using Svelte
 
+Install PHP first (`brew install php`)
+
 ```bash
 npm install
 npm run dev
-npm run php
 ```
 
 Navigate to [localhost:8000](http://localhost:8000).
