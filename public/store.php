@@ -17,14 +17,14 @@ function get_filename($key) {
     return "../store/$key.json";
 }
 
-$key = $_GET['key'];
+$key = $_GET['key'] ?? null;
 if ($key) {
     $filename = get_filename($key);
     if (!file_exists($filename)) {
         not_found();
     }
 }
-$authToken = $_GET['authToken'];
+$authToken = $_GET['authToken'] ?? null;
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
