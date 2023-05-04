@@ -17,9 +17,9 @@ const createEmpty = () => ({
 export const canEdit = writable(true);
 export const isDirty = writable(true);
 
-canEdit.subscribe((s) => {
-    console.log(s);
-});
+// canEdit.subscribe((s) => {
+//     console.log(s);
+// });
 export const legs = writable([]);
 export const options = writable(createEmpty());
 

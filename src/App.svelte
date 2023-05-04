@@ -5,8 +5,9 @@ import LegsTable from './components/LegsTable.svelte';
 import Modal from './components/Modal.svelte';
 import Url from './components/Url.svelte';
 import Comment from './components/Comment.svelte';
+import Disclaimer from './components/Disclaimer.svelte';
+import Exports from './components/Exports.svelte';
 
-import { asGeoJSON, asGPX, asKML } from './exports.js';
 import { onMount } from 'svelte';
 import { legs, options, canEdit, isDirty, load, persist, reset, fork } from './store.js';
 
@@ -60,25 +61,6 @@ function showModal(source) {
     modal.open(source);
 }
 
-const exportFormats = {
-    GeoJSON: asGeoJSON,
-    GPX: asGPX,
-    KML: asKML,
-};
-
-function exportPlanner(format) {
-    const data = Object.assign({}, $options);
-    data.legs = $legs;
-
-    const contents = exportFormats[format](data, url);
-
-    let tag = document.createElement('a');
-    tag.href = `data:text/json;charset=utf-8,${encodeURIComponent(contents)}`;
-    tag.target = '_blank';
-    tag.download = `sailplanner.${format.toLowerCase()}`;
-    tag.click();
-}
-
 $: {
     url = window.location.origin + window.location.pathname + '#' + $options.key;
 }
@@ -126,14 +108,7 @@ $: {
             <button class="button" title="Start over..." on:click={reset}>New</button>
             <button class="button" title="Copy this planner..." on:click={fork}>Copy</button>
 
-            <button class="button dropdown" title="Various export methods">
-                Export
-                <div class="formats">
-                    {#each Object.keys(exportFormats) as format}
-                        <div class="button" on:click={(e) => exportPlanner(format)}>{format}</div>
-                    {/each}
-                </div>
-            </button>
+            <Exports {legs} {options} {url} />
             {#if $canEdit}
                 <button class="button pull-right" title="Save state planner to the server..." on:click={save}>
                     {#if !$isDirty}<span color="green">✓</span>{/if}
@@ -149,12 +124,7 @@ $: {
         {#each modals as [contents, label]}<button on:click={(e) => showModal(contents)}>{label}</button> |&nbsp;{/each}
         <a href="https://github.com/jieter/sailplanner.nl" target="_new">GitHub</a>
     </div>
-    <div id="disclaimer">
-        <h5>Disclaimer</h5>
-        Altough I'm trying to provide a functional Sailplanner at all time, Sailplanner is provided
-        <strong>as is</strong>, no guarantee can be made whatsoever.<br />
-        Sailplanner is designed for planning purposes only and should not be used as a navigation aid.
-    </div>
+    <Disclaimer />
 
     <Modal bind:this={modal} />
 </div>
@@ -165,25 +135,6 @@ $: {
 </Map>
 
 <style>
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
-.dropdown::after {
-    content: '▼';
-}
-.dropdown:hover .formats {
-    display: block;
-}
-.dropdown .formats {
-    display: none;
-    position: absolute;
-    min-width: 40px;
-    margin-top: 2px;
-    margin-left: -4px;
-    z-index: 1;
-}
-
 .links button {
     display: inline;
     border: 0;
